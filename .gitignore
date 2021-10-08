@@ -144,3 +144,6 @@ cython_debug/
 # Added Ignores
 # venv/virtual environment files
 .venv/
+
+# vscode settings
+.vscode/
