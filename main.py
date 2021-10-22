@@ -1,13 +1,18 @@
 
 import cv2 as cv
 import numpy as np
+import screen_brightness_control as sbc
 
 # Sets the maximum and minimum values for linear interpolation
-max_luma = 255
-min_luma = 0
+max_luma = 235
+min_luma = 16
 
 max_display = 100
 min_display = 0
+
+# Basic threshold to change display brightness
+threshold = 5
+prev_display_brightness = sbc.get_brightness(display=0)
 
 
 def get_brightness(vc):
@@ -54,7 +59,10 @@ if __name__ == '__main__':
             new_display_brightness = round(np.interp(brightness,
                                            [min_luma, max_luma],
                                            [min_display, max_display]))
-            
+            print(prev_display_brightness, new_display_brightness)
+            if abs(new_display_brightness - prev_display_brightness) > threshold:
+                sbc.set_brightness(new_display_brightness)
+                prev_display_brightness = new_display_brightness
         except Exception:
             # Closes if webcam is not working
             print('ERROR: Webcam Disconnected')
