@@ -4,6 +4,8 @@ import cv2 as cv
 
 
 def get_brightness(vc):
+    # Gets brightness from webcam frame
+
     # Gets webcam frame
     _, frame = vc.read()
 
@@ -26,6 +28,14 @@ if __name__ == '__main__':
     cv.namedWindow('webcam')
     vc = cv.VideoCapture(0)
 
+    # Gets old exposure values
+    original_auto = vc.get(cv.CAP_PROP_AUTO_EXPOSURE)
+    original_exposure = vc.get(cv.CAP_PROP_EXPOSURE)
+
+    # Sets exposure to 100% and disables auto-Exposure
+    vc.set(cv.CAP_PROP_AUTO_EXPOSURE, float(0))
+    vc.set(cv.CAP_PROP_EXPOSURE, float(1))
+
     while True:
         if cv.waitKey(5) == 27 or cv.waitKey(5) == 113:
             # Code for exiting the webcam window
@@ -33,10 +43,16 @@ if __name__ == '__main__':
             break
 
         try:
-            print(get_brightness(vc))
+            brightness = get_brightness(vc)
+            print(brightness)
         except Exception:
+            # Closes if webcam is not working
             print('ERROR: Webcam Disconnected')
             break
+
+    # Returns exposure to original settings
+    vc.set(cv.CAP_PROP_AUTO_EXPOSURE, original_auto)
+    vc.set(cv.CAP_PROP_EXPOSURE, original_exposure)
 
     # Closes webcam input and display
     vc.release()
