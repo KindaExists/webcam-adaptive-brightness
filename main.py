@@ -1,6 +1,6 @@
 
 import cv2 as cv
-# import numpy as np
+import numpy as np
 
 # Sets the maximum and minimum values for linear interpolation
 max_luma = 255
@@ -51,6 +51,10 @@ if __name__ == '__main__':
 
         try:
             brightness = get_brightness(vc)
+            new_display_brightness = round(np.interp(brightness,
+                                           [min_luma, max_luma],
+                                           [min_display, max_display]))
+            
         except Exception:
             # Closes if webcam is not working
             print('ERROR: Webcam Disconnected')
