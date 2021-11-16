@@ -1,77 +1,17 @@
+from webcam import Webcam
+from brightness import Screen
 
-import cv2 as cv
-import numpy as np
-import screen_brightness_control as sbc
-
-# Sets the maximum and minimum values for linear interpolation
-max_luma = 235
-min_luma = 16
-
-max_display = 100
+min_ambient = 16
+max_ambient = 235
 min_display = 0
-
-# Basic threshold to change display brightness
+max_display = 100
 threshold = 5
-prev_display_brightness = sbc.get_brightness(display=0)
-
-
-def get_brightness(vc):
-    # Gets brightness from webcam frame
-
-    # Gets webcam frame
-    _, frame = vc.read()
-
-    # Display grayscaled webcam output (for testing)
-    cv.imshow('webcam', frame)
-
-    # Converts image from BGR to Y'UV
-    yuv_frame = cv.cvtColor(frame, cv.COLOR_BGR2YUV)
-    mean = cv.mean(yuv_frame)
-
-    # Obtain the average Y' (Luma) of the image
-    brightness = mean[0]
-    return brightness
-
 
 if __name__ == '__main__':
-    # This only runs if opened in this specific file
+    wc = Webcam(0)
+    sc = Screen()
 
-    # Setup for webcam input and display
-    cv.namedWindow('webcam')
-    vc = cv.VideoCapture(0)
-
-    # Gets old exposure values
-    original_auto = vc.get(cv.CAP_PROP_AUTO_EXPOSURE)
-    original_exposure = vc.get(cv.CAP_PROP_EXPOSURE)
-
-    # Sets exposure to 100% and disables auto-Exposure
-    vc.set(cv.CAP_PROP_AUTO_EXPOSURE, float(0))
-    vc.set(cv.CAP_PROP_EXPOSURE, float(1))
-
-    while True:
-        if cv.waitKey(5) == 27 or cv.waitKey(5) == 113:
-            # Code for exiting the webcam window
-            # "ESC" or "q" key
-            break
-
-        try:
-            brightness = get_brightness(vc)
-            new_display_brightness = round(np.interp(brightness,
-                                           [min_luma, max_luma],
-                                           [min_display, max_display]))
-            print(prev_display_brightness, new_display_brightness)
-            if abs(new_display_brightness - prev_display_brightness) > threshold:
-                sbc.set_brightness(new_display_brightness)
-                prev_display_brightness = new_display_brightness
-        except Exception:
-            # Closes if webcam is not working
-            print('ERROR: Webcam Disconnected')
-            break
-
-    # Returns exposure to original settings
-    vc.set(cv.CAP_PROP_AUTO_EXPOSURE, original_auto)
-    vc.set(cv.CAP_PROP_EXPOSURE, original_exposure)
-
-    # Closes webcam input and display
-    vc.release()
-    cv.destroyWindow('webcam')
+    ambient_brightness = wc.get_brightness()
+    print(ambient_brightness)
+    sc.update_brightness(ambient_brightness, min_ambient, max_ambient,
+                         min_display, max_display)
