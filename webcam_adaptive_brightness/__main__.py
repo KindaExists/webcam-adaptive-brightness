@@ -11,7 +11,9 @@ if __name__ == '__main__':
     wc = Webcam(0)
     sc = Screen()
 
+    wc.open()
     ambient_brightness = wc.get_brightness()
     print(ambient_brightness)
     sc.update_brightness(ambient_brightness, min_ambient, max_ambient,
                          min_display, max_display)
+    wc.release()

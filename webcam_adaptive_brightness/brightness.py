@@ -11,7 +11,7 @@ class Screen:
         return new_display_brightness
 
     def __set_brightness(self, brightness):
-        sbc.fade_brightness(brightness, interval=0, blocking=False)
+        sbc.set_brightness(brightness)
 
     def update_brightness(self, ambient_brightness,
                           min_ambient, max_ambient,
