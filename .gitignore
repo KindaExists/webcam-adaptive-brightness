@@ -149,4 +149,4 @@ cython_debug/
 .vscode/
 
 # temporary files
-temporary/
+temp/
