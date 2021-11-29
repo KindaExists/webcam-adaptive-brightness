@@ -1,0 +1,18 @@
+{
+    "current_preset": "default",
+    "presets": {
+        "default": {
+            "ambient_brightness": {
+                "min": 16,
+                "max": 235
+            },
+            "display_brightness": {
+                "min": 0,
+                "max": 100
+            },
+            "threshold": 1,
+            "interval": 30,
+            "device": 0
+        }
+    }
+}
