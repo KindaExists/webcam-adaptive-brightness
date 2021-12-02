@@ -2,18 +2,19 @@ import numpy as np
 import wmi
 
 
-def set_brightness(brightness):
+def _set_screen_brightness(brightness):
     win = wmi.WMI(namespace='wmi')
     methods = win.WmiMonitorBrightnessMethods()[0]
     methods.WmiSetBrightness(brightness, 0)
 
-
-def ambient_to_display(brightness, min_ambient, max_ambient, min_display, max_display):
-    new_display_brightness = round(np.interp(brightness, [min_ambient, max_ambient], [min_display, max_display]))
+def _translate_ambient_to_display(brightness, minmax_ambient, minmax_display):
+    new_display_brightness = round(np.interp(brightness,
+        [minmax_ambient['min'], minmax_ambient['max']],
+        [minmax_display['min'], minmax_display['max']]))
     return new_display_brightness
 
+def update_brightness(ambient_brightness, minmax_ambient, minmax_display):
+    new_display_brightness = _translate_ambient_to_display(ambient_brightness, minmax_ambient, minmax_display)
+    _set_screen_brightness(new_display_brightness)
 
-def update_brightness(ambient_brightness, min_ambient, max_ambient, min_display, max_display):
-    new_brightness = ambient_to_display(ambient_brightness, min_ambient, max_ambient, min_display, max_display)
 
-    set_brightness(new_brightness)
