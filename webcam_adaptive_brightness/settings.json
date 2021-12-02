@@ -11,7 +11,8 @@
                 "max": 100
             },
             "threshold": 1,
-            "interval": 30,
+            "loop_interval": 1,
+            "update_interval": 10,
             "device": 0
         }
     }
