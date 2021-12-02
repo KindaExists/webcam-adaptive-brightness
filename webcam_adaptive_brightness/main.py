@@ -32,8 +32,8 @@ def run():
     configs = Settings(settings_path)
 
     # Initialize webcam and open stream
-    wc = Webcam(configs.device)
-    wc.open()
+    wc = Webcam()
+    wc.open(configs.device)
 
     capture = wc.get_gray()
     wc.show_image('Window', capture)
