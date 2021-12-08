@@ -1,6 +1,6 @@
 from webcam import Webcam
 from settings import Settings
-import display
+from display import Display
 import cv2 as cv
 import time
 
@@ -52,16 +52,29 @@ def run():
     configs = Settings(settings_path)
 
     # Initialize webcam and open stream
-    wc = Webcam()
-    wc.open(configs.device)
-    wc.show_image('Window', wc.get_gray())
+    try:
+        wc = Webcam()
+        wc.open(configs.device)
+        wc.show_image('Window', wc.get_gray())
+    except Exception as e:
+        print("Webcam not found! Please check and make sure it's working")
+        print(e)
+        return
 
-    threshold_basis = -configs.threshold
+    try:
+        display = Display()
+    except Exception as e:
+        print('Display not compatible. This program only works with Windows 10 laptops and displays.')
+        print(e)
+        return
+
+    # Initially set to a large negative float so that threshold
+    # will always change on first update
+    threshold_basis = -999999.0
 
     # Initialize filter object
     # Specific formula used to compute "max_points" was added to avoid
     # there not being enough steps to adjust filter
-    # Also because the end product will likely have [ loop_interval == update_interval ]
     brightness_filter = filter_mean(max_points=(configs.update_interval // configs.loop_interval))
     try:
         # Start timers
@@ -81,10 +94,11 @@ def run():
                 # Updates screen brightness if update timer is done
                 if update_timer.is_done():
                     ambient_brightness = brightness_filter.get_mean()
+                    print(ambient_brightness)
 
                     # Checks if threshold has been passed before updating screen brightness
                     if abs(ambient_brightness - threshold_basis) >= configs.threshold:
-                        display.update_brightness(ambient_brightness, configs.ambient, configs.display)
+                        display.update_from_ambient(ambient_brightness, configs.ambient, configs.display)
 
                         # Sets new threshold
                         threshold_basis = ambient_brightness
