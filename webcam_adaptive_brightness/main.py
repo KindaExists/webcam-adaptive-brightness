@@ -27,6 +27,26 @@ class filter_mean:
         return sum(self.vals)/self.N
 
 
+class Timer:
+    def __init__(self, timer_interval):
+        self.interval = timer_interval
+        self.start()
+
+    def start(self):
+        self.start_time = time.time()
+
+    def get_passed(self):
+        current_time = time.time()
+        return current_time - self.start_time
+
+    def is_done(self):
+        if self.get_passed() >= self.interval:
+            self.start()
+            return True
+
+        return False
+
+
 def run():
     # Load configuration/settings JSON file
     configs = Settings(settings_path)
@@ -34,46 +54,42 @@ def run():
     # Initialize webcam and open stream
     wc = Webcam()
     wc.open(configs.device)
+    wc.show_image('Window', wc.get_gray())
 
-    capture = wc.get_gray()
-    wc.show_image('Window', capture)
+    threshold_basis = -configs.threshold
 
     # Initialize filter object
-    brightness_filter = filter_mean(max_points=12)
+    # Specific formula used to compute "max_points" was added to avoid
+    # there not being enough steps to adjust filter
+    # Also because the end product will likely have [ loop_interval == update_interval ]
+    brightness_filter = filter_mean(max_points=(configs.update_interval // configs.loop_interval))
     try:
-        # Start timers by setting them to the current time
-        loop_timer_start = time.time()
-        update_timer_start = time.time()
-        while True:
-            # Check loop timer and find current length
-            loop_timer_now = time.time()
-            loop_timer_length = loop_timer_now - loop_timer_start
+        # Start timers
+        update_timer =  Timer(configs.update_interval)
+        loop_timer = Timer(configs.loop_interval)
 
-            # Updates values and reads camera after loop timer is done
-            if configs.loop_interval <= loop_timer_length:
+        while True:
+            # Captures another image from webcam/runs again if loop timer is done
+            if loop_timer.is_done():
                 # Get grayscaled image and display on-screen
-                cap = wc.get_gray()
-                wc.show_image('Window', cap)
+                wc.show_image('Window', wc.get_gray())
 
                 # Measure brightness and insert into filter
                 measured_brightness = wc.get_brightness()
                 brightness_filter.insert(measured_brightness)
 
-                # Check update timer and find current length
-                update_timer_now = time.time()
-                update_timer_length = update_timer_now - update_timer_start
-
                 # Updates screen brightness if update timer is done
-                if configs.update_interval <= update_timer_length:
-                    # Resets update timer by setting start time to current time
-                    update_timer_start = update_timer_now
+                if update_timer.is_done():
                     ambient_brightness = brightness_filter.get_mean()
 
-                    display.update_brightness(ambient_brightness, configs.ambient, configs.display)
+                    # Checks if threshold has been passed before updating screen brightness
+                    if abs(ambient_brightness - threshold_basis) >= configs.threshold:
+                        display.update_brightness(ambient_brightness, configs.ambient, configs.display)
 
-                # Resets loop timer by setting start time to current time
-                loop_timer_start = loop_timer_now
+                        # Sets new threshold
+                        threshold_basis = ambient_brightness
 
+            # TEMPORARY: Await "Esc" key response to close program
             if cv.waitKey(20) == 27:
                 break
 
