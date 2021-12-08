@@ -10,9 +10,9 @@
                 "min": 0,
                 "max": 100
             },
-            "threshold": 1,
-            "loop_interval": 1,
-            "update_interval": 10,
+            "threshold": 10,
+            "loop_interval": 2,
+            "update_interval": 2,
             "device": 0
         }
     }

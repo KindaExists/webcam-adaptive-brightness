@@ -6,7 +6,7 @@ class Settings:
         with open(self.json_path, 'r', encoding='utf8') as fp:
             self.json_data = json.load(fp)
             current_preset = self.json_data['current_preset']
-            self.open_preset(current_preset)
+            self.load_preset(current_preset)
 
     def open_preset(self, preset):
         preset_config = self.json_data['presets'][preset]
@@ -18,7 +18,7 @@ class Settings:
         self.update_interval = preset_config['update_interval']
         self.device = preset_config['device']
 
-    def switch_preset(self, preset_name):
+    def load_preset(self, preset_name):
         self.json_data['current_preset'] = preset_name
         self.open_preset(preset_name)
 
@@ -45,7 +45,3 @@ class Settings:
             preset_config['device'] = self.device
 
             json.dump(self.json_data, fp, indent=4)
-
-if __name__ == '__main__':
-    config = Settings('./webcam_adaptive_brightness/settings.json')
-    config.save_current()
