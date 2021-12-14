@@ -32,6 +32,10 @@ class Timer:
         self.interval = timer_interval
         self.start()
 
+    def set_interval(self, new_interval):
+        self.interval = new_interval
+        self.start()
+
     def start(self):
         self.start_time = time.time()
 
@@ -62,7 +66,7 @@ def run():
         return
 
     try:
-        display = Display()
+        display = Display(0)
     except Exception as e:
         print('Display not compatible. This program only works with Windows 10 laptops and displays.')
         print(e)
@@ -75,11 +79,12 @@ def run():
     # Initialize filter object
     # Specific formula used to compute "max_points" was added to avoid
     # there not being enough steps to adjust filter
-    brightness_filter = filter_mean(max_points=(configs.update_interval // configs.loop_interval))
+    brightness_filter = filter_mean(max_points=(configs.samples_per_update))
     try:
         # Start timers
         update_timer =  Timer(configs.update_interval)
-        loop_timer = Timer(configs.loop_interval)
+        loop_interval = configs.update_interval / configs.samples_per_update
+        loop_timer = Timer(loop_interval)
 
         while True:
             # Captures another image from webcam/runs again if loop timer is done
@@ -94,11 +99,10 @@ def run():
                 # Updates screen brightness if update timer is done
                 if update_timer.is_done():
                     ambient_brightness = brightness_filter.get_mean()
-                    print(ambient_brightness)
 
                     # Checks if threshold has been passed before updating screen brightness
                     if abs(ambient_brightness - threshold_basis) >= configs.threshold:
-                        display.update_from_ambient(ambient_brightness, configs.ambient, configs.display)
+                        display.update_from_ambient(ambient_brightness, configs.ambient)
 
                         # Sets new threshold
                         threshold_basis = ambient_brightness
@@ -107,8 +111,8 @@ def run():
             if cv.waitKey(20) == 27:
                 break
 
-            # Sleep program for a short bit to reduce load
-            time.sleep(0.1)
+            # Pause execution of program for a short bit to reduce load
+            # time.sleep(0.1)
     except Exception as e:
         print(e)
     finally:
