@@ -1,6 +1,4 @@
 numpy==1.21.4
 opencv-python==4.5.3.56
-PySide2==5.15.2
 pywin32==302
-shiboken2==5.15.2
 WMI==1.5.1
