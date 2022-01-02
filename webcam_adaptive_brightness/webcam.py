@@ -5,23 +5,24 @@ class Webcam:
     def __init__(self):
         self.vc = cv.VideoCapture()
 
-    def get_brightness(self):
-        frame = self.get_gray()
+    def get_brightness(self, compression_factor=1):
+        frame = self.get_gray(compression_factor)
         brightness = cv.mean(frame)[0]
 
         return brightness
 
-    def get_gray(self):
+    def get_gray(self, compression_factor=1):
         # Converts image from BGR to Grayscale (Y')
-        cap = self.get_capture()
+        cap = self.get_capture(compression_factor)
         gray = cv.cvtColor(cap, cv.COLOR_BGR2GRAY)
 
         return gray
 
-    def get_capture(self):
+    def get_capture(self, compression_factor=1):
         _, frame = self.vc.read()
-
-        return frame
+        compressed = cv.resize(frame, (frame.shape[1] // compression_factor,
+                                       frame.shape[0] // compression_factor))
+        return compressed
 
     def open(self, cam_id):
         self.vc.open(cam_id)

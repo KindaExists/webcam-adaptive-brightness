@@ -41,6 +41,7 @@ class Timer:
 
     def get_passed(self):
         current_time = time.time()
+        print(current_time - self.start_time)
         return current_time - self.start_time
 
     def is_done(self):
@@ -59,7 +60,7 @@ def run():
     try:
         wc = Webcam()
         wc.open(configs.device)
-        wc.show_image('Window', wc.get_gray())
+        wc.show_image('Window', wc.get_gray(compression_factor=2))
     except Exception as e:
         print("Webcam not found! Please check and make sure it's working")
         print(e)
@@ -68,7 +69,8 @@ def run():
     try:
         display = Display(0)
     except Exception as e:
-        print('Display not compatible. This program only works with Windows 10 laptops and displays.')
+        print('Display not compatible. This program only works ' +
+              'with Windows 10 laptops and displays.')
         print(e)
         return
 
@@ -82,27 +84,32 @@ def run():
     brightness_filter = filter_mean(max_points=(configs.samples_per_update))
     try:
         # Start timers
-        update_timer =  Timer(configs.update_interval)
+        update_timer = Timer(configs.update_interval)
         loop_interval = configs.update_interval / configs.samples_per_update
         loop_timer = Timer(loop_interval)
 
         while True:
-            # Captures another image from webcam/runs again if loop timer is done
+            # Captures another image from webcam/runs again
+            # if loop timer is done
             if loop_timer.is_done():
                 # Get grayscaled image and display on-screen
-                wc.show_image('Window', wc.get_gray())
+                wc.show_image('Window', wc.get_gray(compression_factor=2))
 
                 # Measure brightness and insert into filter
-                measured_brightness = wc.get_brightness()
+                measured_brightness = wc.get_brightness(compression_factor=2)
                 brightness_filter.insert(measured_brightness)
 
                 # Updates screen brightness if update timer is done
                 if update_timer.is_done():
                     ambient_brightness = brightness_filter.get_mean()
+                    print(ambient_brightness)
 
-                    # Checks if threshold has been passed before updating screen brightness
-                    if abs(ambient_brightness - threshold_basis) >= configs.threshold:
-                        display.update_from_ambient(ambient_brightness, configs.ambient)
+                    # Checks if threshold has been passed
+                    # before updating screen brightness
+                    threshold_diff = abs(ambient_brightness - threshold_basis)
+                    if threshold_diff >= configs.threshold:
+                        display.update_from_ambient(ambient_brightness,
+                                                    configs.ambient)
 
                         # Sets new threshold
                         threshold_basis = ambient_brightness
