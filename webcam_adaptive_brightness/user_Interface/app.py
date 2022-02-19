@@ -105,6 +105,7 @@ class App(ctk.CTk):
         self.disable_save()
 
         self.core.update_webcam_device()
+        self.core.update_helpers()
 
 
     def load_saved_settings(self):

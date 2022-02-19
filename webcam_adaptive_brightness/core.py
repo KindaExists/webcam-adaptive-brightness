@@ -53,13 +53,12 @@ class Core:
                 # before updating screen brightness
                 threshold_diff = abs(ambient_brightness - self.threshold_basis)
                 if threshold_diff >= self.configs.get_setting('threshold') * ((self.display.ambient_range[-1] / 100) + self.display.ambient_range[0]):
-                    """
                     self.display.update_screen_brightness(
                         ambient_brightness,
                         self.configs.get_setting('ambient_percentages'),
                         self.configs.get_setting('screen_percentages')
                     )
-                    """
+
                     # Sets new threshold basis
                     self.threshold_basis = ambient_brightness
 

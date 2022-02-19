@@ -14,9 +14,13 @@ class FilterMean:
             self.N += 1
         else:
             self.vals = self.vals[1:] + [new_val]
+        print(self.vals)
 
     def set_points(self, max_points=10):
         self.max_points = max_points
+        if max_points < len(self.vals):
+            self.vals = self.vals[:max_points]
+            self.N = max_points
 
     def get_mean(self):
         return sum(self.vals)/self.N
