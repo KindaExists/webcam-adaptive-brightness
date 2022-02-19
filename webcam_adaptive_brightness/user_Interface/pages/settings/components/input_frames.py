@@ -76,7 +76,7 @@ class IntervalInputFrame(ctk.CTkFrame):
         self.controller.enable_save()
 
     def get_value(self):
-        return self.interval_variable.get() or 1
+        return int(self.interval_variable.get() or 1)
 
     def set_value(self, new_value):
         self.interval_variable.set(new_value)
@@ -160,7 +160,7 @@ class ThresholdInputFrame(ctk.CTkFrame):
         self.controller.enable_save()
 
     def get_value(self):
-        return self.threshold_variable.get() or 0
+        return float(self.threshold_variable.get() or 0)
 
     def set_value(self, new_value):
         self.threshold_variable.set(new_value)
@@ -241,7 +241,7 @@ class SamplesInputFrame(ctk.CTkFrame):
         self.controller.enable_save()
 
     def get_value(self):
-        return self.samples_variable.get() or 1
+        return int(self.samples_variable.get() or 1)
 
     def set_value(self, new_value):
         self.samples_variable.set(new_value)
@@ -272,8 +272,9 @@ class StartUpCheckboxFrame(ctk.CTkFrame):
         )
 
         # Setup grid layout
-        self.columnconfigure(0, weight=1, uniform='col')
-        self.rowconfigure(0, weight=1, uniform='col')
+        self.columnconfigure(0)
+        self.columnconfigure(1, weight=1)
+        self.rowconfigure(0, weight=1)
         self.grid_propagate(False)
 
         self.__init_widgets()
@@ -285,7 +286,7 @@ class StartUpCheckboxFrame(ctk.CTkFrame):
             self,
             variable=self.startup_variable,
             text_font=('Bahnschrift Light', 10),
-            text='Open on Start',
+            text='',
 
             bg_color=COLOR['dark_gray_2'],
             fg_color=COLOR['light_gray_1'],
@@ -300,7 +301,19 @@ class StartUpCheckboxFrame(ctk.CTkFrame):
             corner_radius=7,
         )
         self.startup_variable.set(False)
-        startup_checkbox.grid(column=0, row=0, sticky='we')
+        startup_checkbox.grid(column=0, row=0, padx=(0, 0))
+
+        startup_label = tk.Label(
+            self,
+            font=('Bahnschrift Light', 10),
+            text='Open on Start',
+            justify='left',
+            anchor='w',
+
+            bg=COLOR['dark_gray_2'],
+            fg=COLOR['white'],
+        )
+        startup_label.grid(column=1, row=0, sticky='we')
 
         self.startup_variable.trace_add(
             'write', lambda name, index, mode, var=self.startup_variable: \
@@ -329,7 +342,8 @@ class PreviewCheckboxFrame(ctk.CTkFrame):
         )
 
         # Setup grid layout
-        self.columnconfigure(0, weight=1)
+        self.columnconfigure(0)
+        self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
         self.grid_propagate(False)
 
@@ -342,7 +356,7 @@ class PreviewCheckboxFrame(ctk.CTkFrame):
             self,
             variable=self.preview_variable,
             text_font=('Bahnschrift Light', 10),
-            text='Enable Webcam Preview',
+            text='',
 
             bg_color=COLOR['dark_gray_2'],
             fg_color=COLOR['light_gray_1'],
@@ -354,10 +368,22 @@ class PreviewCheckboxFrame(ctk.CTkFrame):
             onvalue=True,
 
             offvalue=False,
-            corner_radius=7,
+            corner_radius=7
         )
         self.preview_variable.set(False)
-        preview_checkbox.grid(column=0, row=0, sticky='we')
+        preview_checkbox.grid(column=0, row=0, padx=(0, 0))
+
+        preview_label = tk.Label(
+            self,
+            font=('Bahnschrift Light', 10),
+            text='Enable Preview',
+            justify='left',
+            anchor='w',
+
+            bg=COLOR['dark_gray_2'],
+            fg=COLOR['white'],
+        )
+        preview_label.grid(column=1, row=0, sticky='we')
 
         self.preview_variable.trace_add(
             'write', lambda name, index, mode, var=self.preview_variable: \
@@ -475,7 +501,7 @@ class DeviceInput(ctk.CTkFrame):
         expand_button.place(relx=0.87, rely=0.5, anchor='center')
 
     def get_value(self):
-        return self.device_variable.get()
+        return int(self.device_variable.get())
 
     def set_value(self, new_value):
         self.device_variable.set(new_value)

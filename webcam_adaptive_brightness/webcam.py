@@ -1,21 +1,20 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import cv2 as cv
 
 
 class Webcam:
     def __init__(self):
-        self.vc = cv.VideoCapture()
+        self.vc = cv.VideoCapture(cv.CAP_DSHOW)
 
-    def get_brightness(self, compression_factor=1):
-        frame = self.get_gray(compression_factor)
-        brightness = cv.mean(frame)[0]
-
+    def get_frame_brightness(self, frame):
+        gray = self.convert_gray(frame)
+        brightness = cv.mean(gray)[0]
         return brightness
 
-    def get_gray(self, compression_factor=1):
+    def convert_gray(self, frame):
         # Converts image from BGR to Grayscale (Y')
-        cap = self.get_capture(compression_factor)
-        gray = cv.cvtColor(cap, cv.COLOR_BGR2GRAY)
-
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         return gray
 
     def get_capture(self, compression_factor=1):

@@ -251,7 +251,10 @@ class WebcamDisplayFrame(ctk.CTkFrame):
         )
         self.webcam_preview.place(width=340, height=255, relx=0.5, rely=0.55, anchor='center')
 
+        self.image = None
+
     def set_image(self, image_object):
+        self.image = image_object
         self.webcam_preview.configure(
-            image = image_object
+            image = self.image
         )

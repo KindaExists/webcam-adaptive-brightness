@@ -76,7 +76,7 @@ class SettingsButton(ctk.CTkButton):
             master,
             text='Settings',
             text_font=('Bahnschrift SemiBold', 10),
-            # image=self.settings_icon,
+            image=self.settings_icon,
 
             bg_color=COLOR['dark_gray_3'],
             fg_color=COLOR['dark_gray_4'],

@@ -1,60 +1,14 @@
 from webcam import Webcam
-from settings import Settings
+from configs_loader import Configs
 from display import Display
 import cv2 as cv
-import time
-
-settings_path = './webcam_adaptive_brightness/settings.json'
-
-
-class filter_mean:
-    def __init__(self, max_points=10):
-        self.vals = []
-        self.N = 0
-        self.max_points = max_points
-
-    def insert(self, new_val):
-        if self.N < self.max_points:
-            self.vals.append(new_val)
-            self.N += 1
-        else:
-            self.vals = self.vals[1:] + [new_val]
-
-    def set_points(self, max_points=10):
-        self.max_points = max_points
-
-    def get_mean(self):
-        return sum(self.vals)/self.N
-
-
-class Timer:
-    def __init__(self, timer_interval):
-        self.interval = timer_interval
-        self.start()
-
-    def set_interval(self, new_interval):
-        self.interval = new_interval
-        self.start()
-
-    def start(self):
-        self.start_time = time.time()
-
-    def get_passed(self):
-        current_time = time.time()
-        print(current_time - self.start_time)
-        return current_time - self.start_time
-
-    def is_done(self):
-        if self.get_passed() >= self.interval:
-            self.start()
-            return True
-
-        return False
+from helper_classes import IntervalTimer, FilterMean
+import os
 
 
 def run():
     # Load configuration/settings JSON file
-    configs = Settings(settings_path)
+    configs = Configs(os.path.abspath(os.path.dirname(__file__)+'/configs.toml'))
 
     # Initialize webcam and open stream
     try:
@@ -81,12 +35,12 @@ def run():
     # Initialize filter object
     # Specific formula used to compute "max_points" was added to avoid
     # there not being enough steps to adjust filter
-    brightness_filter = filter_mean(max_points=(configs.samples_per_update))
+    brightness_filter = FilterMean(max_points=(configs.samples_per_update))
     try:
         # Start timers
-        update_timer = Timer(configs.update_interval)
+        update_timer = IntervalTimer(configs.update_interval)
         loop_interval = configs.update_interval / configs.samples_per_update
-        loop_timer = Timer(loop_interval)
+        loop_timer = IntervalTimer(loop_interval)
 
         while True:
             # Captures another image from webcam/runs again

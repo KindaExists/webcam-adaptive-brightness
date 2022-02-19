@@ -5,13 +5,15 @@ import os
 import tkinter as tk
 import customtkinter as ctk
 import toml
+from PIL import Image, ImageTk
 
 from user_interface.pages.home.home_ctk import HomeFrame
 from user_interface.pages.settings.settings_ctk import SettingsFrame
 from user_interface.constants import COLOR
 
 class App(ctk.CTk):
-    def __init__(self):
+    def __init__(self, core):
+        self.core = core
         super().__init__(
             bg=COLOR['dark_gray_2']
         )
@@ -39,13 +41,13 @@ class App(ctk.CTk):
 
 
         self.are_changes_saved = True
-        with open(os.path.abspath(__file__+'/../../configs.toml'), 'r+') as fp:
-            self.config = toml.load(fp)
         self.open_frame('home')
+        self.__update_webcam_display()
         self.load_saved_settings()
-
+        self.update()
 
     def on_closing(self):
+        self.core.release_external()
         self.destroy()
 
     def open_frame(self, frame_name):
@@ -87,9 +89,9 @@ class App(ctk.CTk):
         new_config['settings'] = {}
         new_settings = new_config['settings']
 
-        new_settings['update_interval'] = int(settings_main.interval_input_frame.get_value())
-        new_settings['threshold'] = float(settings_main.threshold_input_frame.get_value())
-        new_settings['samples_per_update'] = int(settings_main.samples_input_frame.get_value())
+        new_settings['update_interval'] = settings_main.interval_input_frame.get_value()
+        new_settings['threshold'] = settings_main.threshold_input_frame.get_value()
+        new_settings['samples_per_update'] = settings_main.samples_input_frame.get_value()
 
         (ambient_a, screen_a), (ambient_b, screen_b)= settings_graph.get_all_percentages()
         new_settings['ambient_percentages'] = [ambient_a, ambient_b]
@@ -99,18 +101,17 @@ class App(ctk.CTk):
         new_settings['on_startup_enabled'] = settings_main.start_up_checkbox_frame.get_value()
         new_settings['preview_enabled'] = settings_main.preview_checkbox_frame.get_value()
 
-        self.config = new_config
-        with open(os.path.dirname(os.path.abspath(__file__)) + '/configs.toml', 'r+') as fp:
-            toml.dump(self.config, fp)
-
+        self.core.configs.save_configs(new_config)
         self.disable_save()
+
+        self.core.update_webcam_device()
+
 
     def load_saved_settings(self):
         settings_main = self.settings_frame.body_frame.left_body_frame.settings_main
         settings_graph = self.settings_frame.body_frame.right_body_frame.graph_main_frame.graph_input_frame.graph_canvas
 
-        config = self.config
-        settings = config['settings']
+        settings = self.core.configs.get_settings()
 
         settings_main.interval_input_frame.set_value(settings['update_interval'])
         settings_main.threshold_input_frame.set_value(settings['threshold'])
@@ -126,8 +127,20 @@ class App(ctk.CTk):
 
         self.disable_save()
 
-    def update_values(self):
-        pass
-        # Insert updates here
+    def update(self):
+        had_update = self.core.update()
+        if had_update:
+            self.set_ambient_display(self.core.get_last_ambient_brightness())
+            self.set_screen_display(self.core.get_last_screen_brightness())
+            self.__update_webcam_display()
 
+        self.after(100, self.update)
 
+    def __update_webcam_display(self):
+        if self.core.configs.get_setting('preview_enabled'):
+            cap = self.core.get_converted_capture()
+            img = Image.fromarray(cap)
+            imgtk = ImageTk.PhotoImage(img)
+            self.set_webcam_display(imgtk)
+        else:
+            self.set_webcam_display(None)

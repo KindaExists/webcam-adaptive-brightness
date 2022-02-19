@@ -103,11 +103,11 @@ class SettingsMainFrame(ctk.CTkFrame):
         self.samples_input_frame = SamplesInputFrame(self, self.controller)
         self.samples_input_frame.grid(column= 1, row=1, padx=(10, 0), sticky='nswe')
 
-        self.start_up_checkbox_frame = StartUpCheckboxFrame(self, self.controller)
-        self.start_up_checkbox_frame.grid(column=0, row=2, padx=(0, 10), sticky='nsw')
+        self.preview_checkbox_frame = PreviewCheckboxFrame(self, self.controller)
+        self.preview_checkbox_frame.grid(column=0, row=2, padx=(0, 10), sticky='nswe')
 
-        self.preview_checkbox_frame = StartUpCheckboxFrame(self, self.controller)
-        self.preview_checkbox_frame.grid(column=1, row=2, padx=(10, 0), sticky='nsw')
+        self.start_up_checkbox_frame = StartUpCheckboxFrame(self, self.controller)
+        self.start_up_checkbox_frame.grid(column=1, row=2, padx=(10, 0), sticky='nswe')
 
 
 class SettingsDescriptionFrame(ctk.CTkFrame):
