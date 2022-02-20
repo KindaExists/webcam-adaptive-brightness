@@ -28,15 +28,15 @@ class Webcam:
 
         # Saves exposure settings
         self.def_auto = self.vc.get(cv.CAP_PROP_AUTO_EXPOSURE)
-        self.def_exposure = self.vc.get(cv.CAP_PROP_EXPOSURE)
+        # self.def_exposure = self.vc.get(cv.CAP_PROP_EXPOSURE)
 
         # Sets exposure to 100% and auto-exposure to 0%
         self.vc.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.0)
-        self.vc.set(cv.CAP_PROP_EXPOSURE, 1.0)
+        # self.vc.set(cv.CAP_PROP_EXPOSURE, 1.0)
 
     def release(self):
         self.vc.set(cv.CAP_PROP_AUTO_EXPOSURE, self.def_auto)
-        self.vc.set(cv.CAP_PROP_EXPOSURE, self.def_exposure)
+        # self.vc.set(cv.CAP_PROP_EXPOSURE, self.def_exposure)
 
         self.vc.release()
 
