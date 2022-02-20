@@ -249,10 +249,28 @@ class WebcamDisplayFrame(ctk.CTkFrame):
         )
         self.webcam_preview.place(width=340, height=255, relx=0.5, rely=0.55, anchor='center')
 
+        self.webcam_disabled_label = tk.Label(
+            self,
+            text='Webcam Preview Disabled',
+            font=('Bahnschrift Light', 11),
+            bg=COLOR['black'],
+            fg=COLOR['white'],
+            width=340,
+            height=255,
+        )
+        self.webcam_disabled_label.place(width=340, height=255, relx=0.5, rely=0.55, anchor='center')
+
         self.image = None
 
     def set_image(self, image_object):
         self.image = image_object
-        self.webcam_preview.configure(
-            image = self.image
-        )
+        if self.image:
+            self.webcam_preview.tkraise()
+            self.webcam_preview.configure(
+                image = self.image,
+            )
+        else:
+            self.webcam_disabled_label.tkraise()
+            self.webcam_preview.configure(
+                image = None,
+            )

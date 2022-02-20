@@ -181,7 +181,7 @@ class App(ctk.CTk):
             imgtk = ImageTk.PhotoImage(img)
             self.set_webcam_display(imgtk)
         else:
-            self.set_webcam_display(None)
+            self.set_webcam_display(False)
 
     def update_withdrawn(self):
         # Run algorithm while tkinter window is withdrawn
