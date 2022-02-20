@@ -24,7 +24,8 @@ class BodyFrame(ctk.CTkFrame):
 
         # Setup grid layout
         self.columnconfigure(0, weight=7)
-        self.columnconfigure(1, weight=3)
+        self.columnconfigure(1)
+        self.columnconfigure(2, weight=3)
         self.rowconfigure(0, weight=1)
         self.grid_propagate(False)
 
@@ -32,10 +33,19 @@ class BodyFrame(ctk.CTkFrame):
 
     def __init_widgets(self):
         self.left_body_frame = LeftBodyFrame(self, self.controller)
-        self.left_body_frame.grid(column=0, row=0, padx=20, pady=20, sticky='nswe')
+        self.left_body_frame.grid(column=0, row=0, padx=(20, 10), pady=20, sticky='nswe')
+
+        border_frame = ctk.CTkFrame(
+            self,
+            bg_color=COLOR['dark_gray_3'],
+            fg_color=COLOR['dark_gray_3'],
+            width=4,
+            corner_radius=0,
+        )
+        border_frame.grid(column=1, row=0, sticky='nswe')
 
         self.right_body_frame = RightBodyFrame(self, self.controller)
-        self.right_body_frame.grid(column=1, row=0, padx=(0, 20), pady=20, sticky='nswe')
+        self.right_body_frame.grid(column=2, row=0, padx=(10, 20), pady=20, sticky='nswe')
 
 
 class LeftBodyFrame(ctk.CTkFrame):
