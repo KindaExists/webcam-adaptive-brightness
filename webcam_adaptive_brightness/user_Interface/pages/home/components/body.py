@@ -113,14 +113,13 @@ class AmbientValueFrame(ctk.CTkFrame):
     def __init_widgets(self):
         self.value = tk.Label(
             self,
-            text=f'100%',
+            text=f'---%',
             font=('Monospace', 36),
 
             bg=COLOR['dark_gray_3'],
             fg=COLOR['white'],
             justify='center',
         )
-        self.set_value(100)
         self.value.grid(column=0, row=0)
 
     def set_value(self, ambient_value):
@@ -203,14 +202,13 @@ class ScreenValueFrame(ctk.CTkFrame):
     def __init_widgets(self):
         self.value = tk.Label(
             self,
-            text=f'100%',
+            text=f'---%',
             font=('Monospace', 36),
 
             bg=COLOR['dark_gray_3'],
             fg=COLOR['white'],
             justify='center',
         )
-        self.set_value(100)
         self.value.grid(column=0, row=0)
 
     def set_value(self, screen_value):

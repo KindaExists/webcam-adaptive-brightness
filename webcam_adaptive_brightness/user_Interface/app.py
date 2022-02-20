@@ -1,11 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import os
+import threading
+import time
 
 import tkinter as tk
 import customtkinter as ctk
-import toml
 from PIL import Image, ImageTk
+import pystray
+from pystray import MenuItem as item
 
 from user_interface.pages.home.home_ctk import HomeFrame
 from user_interface.pages.settings.settings_ctk import SettingsFrame
@@ -29,7 +32,9 @@ class App(ctk.CTk):
         self.resizable(False, False)
 
         self.iconbitmap(os.path.dirname(os.path.abspath(__file__)) + '/assets/icon.ico')
-        self.protocol('WM_DELETE_WINDOW', self.on_closing)
+        self.protocol('WM_DELETE_WINDOW', self.close_application)
+
+        self.maximized = True
 
         self.columnconfigure(0, weight = 1)
         self.rowconfigure(0, weight = 1)
@@ -39,16 +44,48 @@ class App(ctk.CTk):
         self.settings_frame = SettingsFrame(self, self)
         self.settings_frame.grid(column=0, row=0, sticky='nswe')
 
+        self.home_frame.bind('<Map>', lambda _: self.show_application())
+        self.home_frame.bind('<Unmap>', lambda _: self.hide_application())
 
         self.are_changes_saved = True
         self.open_frame('home')
         self.__update_webcam_display()
         self.load_saved_settings()
-        self.update()
+        self.update_values()
 
-    def on_closing(self):
+    def close_application(self):
+        try:
+            self.icon.stop()
+        except AttributeError as e:
+            # Explicit pass, as this does just means we don't
+            # have to close the icon
+            pass
         self.core.release_external()
         self.destroy()
+
+    def show_application(self):
+        if not self.maximized:
+            self.icon.stop()
+            self.deiconify()
+
+            if self.widthdraw_thread:
+                self.maximized = True
+                self.widthdraw_thread.join()
+                self.widthdraw_thread = None
+
+    def hide_application(self):
+        if self.maximized:
+            self.maximized = False
+
+            self.withdraw()
+
+            self.widthdraw_thread = threading.Thread(target=self.update_withdrawn)
+            self.widthdraw_thread.start()
+
+            self.image = Image.open(os.path.dirname(os.path.abspath(__file__)) + '/assets/icon.ico')
+            self.menu = (item('Quit', self.close_application), item('Show', self.show_application, default=True))
+            self.icon = pystray.Icon('WAB', self.image, 'Webcam Adaptive-Brightness', self.menu)
+            self.icon.run()
 
     def open_frame(self, frame_name):
         if frame_name == 'home':
@@ -128,14 +165,14 @@ class App(ctk.CTk):
 
         self.disable_save()
 
-    def update(self):
+    def update_values(self):
         had_update = self.core.update()
         if had_update:
             self.set_ambient_display(self.core.get_last_ambient_brightness())
             self.set_screen_display(self.core.get_last_screen_brightness())
             self.__update_webcam_display()
 
-        self.after(100, self.update)
+        self.after(100, self.update_values)
 
     def __update_webcam_display(self):
         if self.core.configs.get_setting('preview_enabled'):
@@ -145,3 +182,10 @@ class App(ctk.CTk):
             self.set_webcam_display(imgtk)
         else:
             self.set_webcam_display(None)
+
+    def update_withdrawn(self):
+        # Run algorithm while tkinter window is withdrawn
+        while not self.maximized:
+            self.core.update()
+            time.sleep(0.1)
+

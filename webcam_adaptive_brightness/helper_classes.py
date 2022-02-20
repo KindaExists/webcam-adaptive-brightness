@@ -14,7 +14,6 @@ class FilterMean:
             self.N += 1
         else:
             self.vals = self.vals[1:] + [new_val]
-        print(self.vals)
 
     def set_points(self, max_points=10):
         self.max_points = max_points
