@@ -5,5 +5,4 @@ samples_per_update = 1
 ambient_percentages = [ 0.0, 100.0,]
 screen_percentages = [ 0.0, 100.0,]
 device_id = 0
-on_startup_enabled = false
 preview_enabled = false

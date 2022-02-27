@@ -108,7 +108,6 @@ class App(ctk.CTk):
             'interval_in': self.settings_frame.body_frame.left_body_frame.settings_main.interval_input_frame,
             'threshold_in': self.settings_frame.body_frame.left_body_frame.settings_main.threshold_input_frame,
             'samples_in': self.settings_frame.body_frame.left_body_frame.settings_main.samples_input_frame,
-            'startup_in': self.settings_frame.body_frame.left_body_frame.settings_main.start_up_checkbox_frame,
             'preview_in': self.settings_frame.body_frame.left_body_frame.settings_main.preview_checkbox_frame,
             'graph_in': self.settings_frame.body_frame.right_body_frame.graph_main_frame.graph_input_frame.graph_canvas
         }
@@ -152,7 +151,6 @@ class App(ctk.CTk):
             new_settings['screen_percentages'] = [screen_a, screen_b]
 
             new_settings['device_id'] = self.io_directory['device_in'].get_value()
-            new_settings['on_startup_enabled'] = self.io_directory['startup_in'].get_value()
             new_settings['preview_enabled'] = self.io_directory['preview_in'].get_value()
 
             self.core.configs.save_configs(new_config)
@@ -174,7 +172,6 @@ class App(ctk.CTk):
         self.io_directory['graph_in'].set_all_percentages(ambient, screen)
 
         self.io_directory['device_in'].set_value(settings['device_id'])
-        self.io_directory['startup_in'].set_value(settings['on_startup_enabled'])
         self.io_directory['preview_in'].set_value(settings['preview_enabled'])
 
         self.disable_save()
