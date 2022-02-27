@@ -348,6 +348,13 @@ class RightBodyFrame(ctk.CTkFrame):
             fg_color=COLOR['dark_gray_2'],
             corner_radius=0,
         )
+
+        self.point_values_description = '\nDirectly change the position of the chosen\n' + \
+            'point on the relationship graph.\nClick on a point to choose it.'
+
+        point_values_frame.bind('<Enter>', self.set_description)
+        point_values_frame.bind('<Leave>', self.remove_description)
+
         point_values_frame.columnconfigure(0, weight=1)
         point_values_frame.columnconfigure(1, weight=1)
         point_values_frame.rowconfigure(0, weight=1)
@@ -465,3 +472,9 @@ class RightBodyFrame(ctk.CTkFrame):
             x = np.clip(float(ambient), 0.0, 100.0) * 2
             y = (100 - np.clip(float(screen), 0.0, 100.0)) * 2
             self.canvas_ref.set_point_position(self.last_selected_point, x, y)
+
+    def set_description(self, event):
+        self.controller.set_setting_description(True, self.point_values_description, '')
+
+    def remove_description(self, event):
+        self.controller.remove_setting_description()

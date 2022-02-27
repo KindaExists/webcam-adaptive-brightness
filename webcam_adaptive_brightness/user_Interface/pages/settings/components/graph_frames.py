@@ -16,6 +16,13 @@ class GraphMainFrame(tk.Frame):
             bg=COLOR['white'],
         )
 
+        self.description = 'Move the points on the graph to set the relationship ' + \
+            'between the ambient brightness(%) and screen brightness(%).\n\n' + \
+            'The line shows the screen brightness value(%) for every ambient brightness value(%).'
+
+        self.bind('<Enter>', self.set_description)
+        self.bind('<Leave>', self.remove_description)
+
         # Setup grid layout
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
@@ -25,6 +32,12 @@ class GraphMainFrame(tk.Frame):
     def __init_widgets(self):
         self.graph_input_frame = GraphInputFrame(self, self.controller)
         self.graph_input_frame.grid(column=0, row=0)
+
+    def set_description(self, event):
+        self.controller.set_setting_description(True, self.description, '')
+
+    def remove_description(self, event):
+        self.controller.remove_setting_description()
 
 
 class GraphInputFrame(tk.Frame):
@@ -350,10 +363,6 @@ class GraphCanvas(tk.Canvas):
         for point_index in range(0, point_count - 1):
             if positions[point_index][0] >= positions[point_index + 1][0]:
                 color = COLOR['error']
-                #? self.itemconfig('point', fill=COLOR['error'])
-            else:
-                pass
-                #? self.itemconfig('point', fill=COLOR['fg'])
 
         self.delete('lines')
 
