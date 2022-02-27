@@ -156,19 +156,26 @@ class SettingsDescriptionText(tk.Text):
 
             bg=COLOR['dark_gray_3'],
             fg=COLOR['white'],
+
+            state=tk.DISABLED,
         )
+        self.tag_configure('minimal', justify=tk.CENTER, foreground=COLOR['light_gray_1'])
         self.tag_configure('normal', justify=tk.CENTER)
         self.tag_configure('error', justify=tk.CENTER, font=('Bahnschrift Bold', 10), foreground=COLOR['error'])
         self.set_default_text()
 
     def set_default_text(self):
+        self.configure(state=tk.NORMAL)
         self.delete('1.0', 'end')
-        self.insert('1.0', '\n\nHover on an option to get its description', 'normal')
+        self.insert('1.0', '\n\nHover on an option to display its description', 'minimal')
+        self.configure(state=tk.DISABLED)
 
     def set_description_text(self, description_text, error_text):
+        self.configure(state=tk.NORMAL)
         self.delete('1.0', 'end')
         self.insert('1.0', description_text, 'normal')
         self.insert('end', f'\n{error_text}', 'error')
+        self.configure(state=tk.DISABLED)
 
 
 class ApplySettingsFrame(ctk.CTkFrame):

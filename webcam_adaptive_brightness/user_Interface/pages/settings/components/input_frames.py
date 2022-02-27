@@ -163,7 +163,7 @@ class IntervalInputFrame(ctk.CTkFrame):
 
         self.is_valid = True
         self.description = '\nChange the interval of time (in seconds) it takes for the screen brightness to update. ' + \
-            'Accepted values range from 1 second to 43,200 seconds.'
+            'Accepted values range\nfrom 1 second to 43,200 seconds.'
         self.error_text = 'Time interval should only be from 1 to 43,200 seconds.'
 
         self.bind('<Enter>', self.set_description)
@@ -287,7 +287,7 @@ class ThresholdInputFrame(ctk.CTkFrame):
 
         self.is_valid = True
         self.description = '\nChange the threshold amount (in percent) needed for the screen to change its brightness. ' + \
-            'Accepted values range from 0% to 100%.'
+            'Accepted values\nrange from 0% to 100%.'
         self.error_text = 'Threshold cannot be above 100%.'
 
         self.bind('<Enter>', self.set_description)
