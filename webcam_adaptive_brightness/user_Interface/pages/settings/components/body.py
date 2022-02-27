@@ -3,6 +3,7 @@
 import os
 
 import tkinter as tk
+from turtle import color
 import customtkinter as ctk
 import numpy as np
 
@@ -128,7 +129,7 @@ class SettingsDescriptionFrame(ctk.CTkFrame):
             master,
             bg_color=COLOR['dark_gray_2'],
             fg_color=COLOR['dark_gray_3'],
-            height=100,
+            height=120,
             corner_radius=10,
         )
 
@@ -141,16 +142,37 @@ class SettingsDescriptionFrame(ctk.CTkFrame):
         self.__init_widgets()
 
     def __init_widgets(self):
-        description_label = tk.Label(
-            self,
-            text='(Hover on settings to get description)',
+        self.description_text = SettingsDescriptionText(self, self.controller)
+        self.description_text.grid(column=0, row=0)
+
+class SettingsDescriptionText(tk.Text):
+    def __init__(self, master, controller):
+        self.parent = master
+        self.controller = controller
+        super().__init__(
+            master,
             font=('Bahnschrift Light', 10),
-            justify='center',
+
+            bd=0,
+            wrap=tk.WORD,
+            width=52,
+            height=5,
 
             bg=COLOR['dark_gray_3'],
             fg=COLOR['white'],
         )
-        description_label.grid(column=0, row=0)
+        self.tag_configure('normal', justify=tk.CENTER)
+        self.tag_configure('error', justify=tk.CENTER, font=('Bahnschrift Bold', 10), foreground=COLOR['error'])
+        self.set_default_text()
+
+    def set_default_text(self):
+        self.delete('1.0', 'end')
+        self.insert('1.0', '\n\nHover on an option to get its description', 'normal')
+
+    def set_description_text(self, description_text, error_text):
+        self.delete('1.0', 'end')
+        self.insert('1.0', description_text, 'normal')
+        self.insert('end', f'\n{error_text}', 'error')
 
 
 class ApplySettingsFrame(ctk.CTkFrame):
@@ -211,7 +233,7 @@ class ApplySettingsButton(ctk.CTkButton):
     def __button_released(self, event):
         if self.state == tk.NORMAL:
             self.configure(
-                fg_color=COLOR['dark_gray_3'],
+                fg_color=COLOR['dark_gray_4'],
             )
 
     def enable_button(self):

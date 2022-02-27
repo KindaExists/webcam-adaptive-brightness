@@ -47,6 +47,8 @@ class App(ctk.CTk):
         self.home_frame.bind('<Map>', lambda _: self.show_application())
         self.home_frame.bind('<Unmap>', lambda _: self.hide_application())
 
+        self.io_directory = self.generate_io_directory()
+
         self.are_changes_saved = True
         self.open_frame('home')
         self.__update_webcam_display()
@@ -79,7 +81,7 @@ class App(ctk.CTk):
 
             self.withdraw()
 
-            self.widthdraw_thread = threading.Thread(target=self.update_withdrawn)
+            self.widthdraw_thread = threading.Thread(target=self.__update_withdrawn)
             self.widthdraw_thread.start()
 
             self.image = Image.open(os.path.dirname(os.path.abspath(__file__)) + '/assets/icon.ico')
@@ -94,76 +96,89 @@ class App(ctk.CTk):
             self.settings_frame.tkraise()
 
 
+
+    def generate_io_directory(self):
+        return {
+            'ambient_out': self.home_frame.body_frame.ambient_display_frame.ambient_value_frame,
+            'screen_out': self.home_frame.body_frame.screen_display_frame.screen_value_frame,
+            'webcam_out': self.home_frame.body_frame.webcam_display_frame,
+            'description_out': self.settings_frame.body_frame.left_body_frame.settings_description.description_text,
+            'apply_btn': self.settings_frame.body_frame.left_body_frame.settings_apply,
+            'device_in': self.settings_frame.body_frame.left_body_frame.settings_main.device_input_frame.device_input,
+            'interval_in': self.settings_frame.body_frame.left_body_frame.settings_main.interval_input_frame,
+            'threshold_in': self.settings_frame.body_frame.left_body_frame.settings_main.threshold_input_frame,
+            'samples_in': self.settings_frame.body_frame.left_body_frame.settings_main.samples_input_frame,
+            'startup_in': self.settings_frame.body_frame.left_body_frame.settings_main.start_up_checkbox_frame,
+            'preview_in': self.settings_frame.body_frame.left_body_frame.settings_main.preview_checkbox_frame,
+            'graph_in': self.settings_frame.body_frame.right_body_frame.graph_main_frame.graph_input_frame.graph_canvas
+        }
+
     def set_ambient_display(self, new_value):
-        ambient_value_frame = self.home_frame.body_frame.ambient_display_frame.ambient_value_frame
+        ambient_value_frame = self.io_directory['ambient_out']
         ambient_value_frame.set_value(new_value)
 
     def set_screen_display(self, new_value):
-        screen_value_frame = self.home_frame.body_frame.screen_display_frame.screen_value_frame
+        screen_value_frame = self.io_directory['screen_out']
         screen_value_frame.set_value(new_value)
 
     def set_webcam_display(self, new_image):
-        webcam_display_frame = self.home_frame.body_frame.webcam_display_frame
+        webcam_display_frame = self.io_directory['webcam_out']
         webcam_display_frame.set_image(new_image)
 
     def enable_save(self):
-        settings_apply = self.settings_frame.body_frame.left_body_frame.settings_apply
+        settings_apply = self.io_directory['apply_btn']
         settings_apply.apply_settings_button.enable_button()
         settings_apply.reset_settings_button.enable_button()
         self.are_changes_saved = False
 
     def disable_save(self):
-        settings_apply = self.settings_frame.body_frame.left_body_frame.settings_apply
+        settings_apply = self.io_directory['apply_btn']
         settings_apply.apply_settings_button.disable_button()
         settings_apply.reset_settings_button.disable_button()
         self.are_changes_saved = True
 
     def save_settings(self):
-        settings_main = self.settings_frame.body_frame.left_body_frame.settings_main
-        settings_graph = self.settings_frame.body_frame.right_body_frame.graph_main_frame.graph_input_frame.graph_canvas
+        if self.validate_setting_inputs():
+            new_config = {}
+            new_config['settings'] = {}
+            new_settings = new_config['settings']
 
-        new_config = {}
-        new_config['settings'] = {}
-        new_settings = new_config['settings']
+            new_settings['update_interval'] = self.io_directory['interval_in'].get_value()
+            new_settings['threshold'] = self.io_directory['threshold_in'].get_value()
+            new_settings['samples_per_update'] = self.io_directory['samples_in'].get_value()
 
-        new_settings['update_interval'] = settings_main.interval_input_frame.get_value()
-        new_settings['threshold'] = settings_main.threshold_input_frame.get_value()
-        new_settings['samples_per_update'] = settings_main.samples_input_frame.get_value()
+            (ambient_a, screen_a), (ambient_b, screen_b) = self.io_directory['graph_in'].get_all_percentages()
+            new_settings['ambient_percentages'] = [ambient_a, ambient_b]
+            new_settings['screen_percentages'] = [screen_a, screen_b]
 
-        (ambient_a, screen_a), (ambient_b, screen_b)= settings_graph.get_all_percentages()
-        new_settings['ambient_percentages'] = [ambient_a, ambient_b]
-        new_settings['screen_percentages'] = [screen_a, screen_b]
+            new_settings['device_id'] = self.io_directory['device_in'].get_value()
+            new_settings['on_startup_enabled'] = self.io_directory['startup_in'].get_value()
+            new_settings['preview_enabled'] = self.io_directory['preview_in'].get_value()
 
-        new_settings['device_id'] = settings_main.device_input_frame.device_input.get_value()
-        new_settings['on_startup_enabled'] = settings_main.start_up_checkbox_frame.get_value()
-        new_settings['preview_enabled'] = settings_main.preview_checkbox_frame.get_value()
+            self.core.configs.save_configs(new_config)
+            self.disable_save()
 
-        self.core.configs.save_configs(new_config)
-        self.disable_save()
-
-        self.core.update_webcam_device()
-        self.core.update_helpers()
+            self.core.update_webcam_device()
+            self.core.update_helpers()
 
 
     def load_saved_settings(self):
-        settings_main = self.settings_frame.body_frame.left_body_frame.settings_main
-        settings_graph = self.settings_frame.body_frame.right_body_frame.graph_main_frame.graph_input_frame.graph_canvas
-
         settings = self.core.configs.get_settings()
 
-        settings_main.interval_input_frame.set_value(settings['update_interval'])
-        settings_main.threshold_input_frame.set_value(settings['threshold'])
-        settings_main.samples_input_frame.set_value(settings['samples_per_update'])
+        self.io_directory['interval_in'].set_value(settings['update_interval'])
+        self.io_directory['threshold_in'].set_value(settings['threshold'])
+        self.io_directory['samples_in'].set_value(settings['samples_per_update'])
 
         ambient = settings['ambient_percentages']
         screen = settings['screen_percentages']
-        settings_graph.set_all_percentages(ambient, screen)
+        self.io_directory['graph_in'].set_all_percentages(ambient, screen)
 
-        settings_main.device_input_frame.device_input.set_value(settings['device_id'])
-        settings_main.start_up_checkbox_frame.set_value(settings['on_startup_enabled'])
-        settings_main.preview_checkbox_frame.set_value(settings['preview_enabled'])
+        self.io_directory['device_in'].set_value(settings['device_id'])
+        self.io_directory['startup_in'].set_value(settings['on_startup_enabled'])
+        self.io_directory['preview_in'].set_value(settings['preview_enabled'])
 
         self.disable_save()
+        self.validate_setting_inputs()
 
     def update_values(self):
         had_update = self.core.update()
@@ -183,9 +198,31 @@ class App(ctk.CTk):
         else:
             self.set_webcam_display(False)
 
-    def update_withdrawn(self):
+    def __update_withdrawn(self):
         # Run algorithm while tkinter window is withdrawn
         while not self.maximized:
             self.core.update()
             time.sleep(0.1)
+
+
+    def validate_setting_inputs(self):
+        is_interval_input_valid = self.io_directory['interval_in'].get_save_validity()
+        self.io_directory['interval_in'].set_invalid_color(is_interval_input_valid)
+
+        is_threshold_input_valid = self.io_directory['threshold_in'].get_save_validity()
+        self.io_directory['threshold_in'].set_invalid_color(is_threshold_input_valid)
+
+        is_samples_input_valid = self.io_directory['samples_in'].get_save_validity()
+        self.io_directory['samples_in'].set_invalid_color(is_samples_input_valid)
+
+        return all([is_interval_input_valid, is_threshold_input_valid, is_samples_input_valid])
+
+    def set_setting_description(self, is_valid, description_text, error_text):
+        if is_valid:
+            self.io_directory['description_out'].set_description_text(description_text, '')
+        else:
+            self.io_directory['description_out'].set_description_text(description_text, error_text)
+
+    def remove_setting_description(self):
+        self.io_directory['description_out'].set_default_text()
 
