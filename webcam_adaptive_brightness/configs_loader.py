@@ -9,8 +9,26 @@ class Configs:
         self.load_configs()
 
     def load_configs(self):
-        with open(self.configs_path, 'r') as fp:
-            self.configs = toml.load(fp)
+        try:
+            with open(self.configs_path, 'r') as fp:
+                self.configs = toml.load(fp)
+        except FileNotFoundError:
+            self.create_new_configs_file()
+
+    def create_new_configs_file(self):
+        new_config = {}
+        new_config['settings'] = {}
+        new_settings = new_config['settings']
+
+        new_settings['update_interval'] = 10.0
+        new_settings['threshold'] = 0.0
+        new_settings['samples_per_update'] = 1
+        new_settings['ambient_percentages'] = [0.0, 100.0]
+        new_settings['screen_percentages'] = [0.0, 100.0]
+        new_settings['device_name'] = False
+        new_settings['preview_enabled'] = True
+
+        self.save_configs(new_config)
 
     def get_configs(self):
         return self.configs
