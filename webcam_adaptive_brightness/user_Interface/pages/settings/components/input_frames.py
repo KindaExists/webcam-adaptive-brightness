@@ -8,6 +8,7 @@ from tkinter import ttk
 import customtkinter as ctk
 
 from user_interface.constants import COLOR, TEXT_FACTOR
+from user_interface import images
 
 
 # ===================================================
@@ -121,7 +122,7 @@ class DeviceInput(ctk.CTkFrame):
         self.__init_widgets()
 
     def __init_widgets(self):
-        self.refresh_icon = tk.PhotoImage(file=os.path.abspath(__file__+'/../../../../assets/outline_refresh_white.png'))
+        self.refresh_icon = tk.PhotoImage(data=images.outline_refresh_white)
         self.device_variable = tk.StringVar()
 
         self.webcam_list = self.controller.core.webcam.list_cameras()

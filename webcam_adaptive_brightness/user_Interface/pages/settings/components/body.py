@@ -205,7 +205,7 @@ class ApplySettingsFrame(ctk.CTkFrame):
 class ApplySettingsButton(ctk.CTkButton):
     def __init__(self, master, controller):
         self.controller = controller
-        self.save_icon = tk.PhotoImage(file=os.path.abspath(__file__+'/../../../../assets/baseline_save_white.png'))
+        self.save_icon = tk.PhotoImage(data=images.baseline_save_white)
 
         super().__init__(
             master,

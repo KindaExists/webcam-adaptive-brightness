@@ -6,6 +6,7 @@ import tkinter as tk
 import numpy as np
 
 from user_interface.constants import COLOR, TEXT_FACTOR
+from user_interface import images
 
 class GraphMainFrame(tk.Frame):
     def __init__(self, master, controller):
@@ -131,7 +132,7 @@ class GraphInputFrame(tk.Frame):
         self.right_label.place(in_=self.graph_canvas, x=200, y=200, anchor='sw')
 
 
-        self.label_image_x = tk.PhotoImage(file=os.path.abspath(__file__+'/../../../../assets/label_x.png'))
+        self.label_image_x = tk.PhotoImage(data=images.label_x)
         graph_label_x = tk.Label(
             self,
             background=COLOR['dark_gray_2'],
@@ -141,7 +142,7 @@ class GraphInputFrame(tk.Frame):
         )
         graph_label_x.place(in_=self.graph_canvas, relx=0.5, y=224, anchor='n')
 
-        self.label_image_y1 = tk.PhotoImage(file=os.path.abspath(__file__+'/../../../../assets/label_y1.png'))
+        self.label_image_y1 = tk.PhotoImage(data=images.label_y1)
         graph_label_y1 = tk.Label(
             self,
             background=COLOR['dark_gray_2'],
@@ -151,7 +152,7 @@ class GraphInputFrame(tk.Frame):
         )
         graph_label_y1.place(in_=self.graph_canvas, x=-40, rely=0.5, anchor='e')
 
-        self.label_image_y2 = tk.PhotoImage(file=os.path.abspath(__file__+'/../../../../assets/label_y2.png'))
+        self.label_image_y2 = tk.PhotoImage(data=images.label_y2)
         graph_label_y2 = tk.Label(
             self,
             background=COLOR['dark_gray_2'],

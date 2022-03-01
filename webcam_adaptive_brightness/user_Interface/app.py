@@ -10,6 +10,7 @@ from PIL import Image, ImageTk
 import pystray
 from pystray import MenuItem as item
 
+from user_interface import images
 from user_interface.pages.home.home_ctk import HomeFrame
 from user_interface.pages.settings.settings_ctk import SettingsFrame
 from user_interface.constants import COLOR
@@ -31,7 +32,7 @@ class App(ctk.CTk):
         self.geometry(f'{self.window_size[0]}x{self.window_size[1]}+{positionRight}+{positionDown}')
         self.resizable(False, False)
 
-        self.iconbitmap(os.path.dirname(os.path.abspath(__file__)) + '/assets/icon.ico')
+        self.iconbitmap(images.icon)
         self.protocol('WM_DELETE_WINDOW', self.close_application)
 
         self.maximized = True
@@ -84,7 +85,7 @@ class App(ctk.CTk):
             self.widthdraw_thread = threading.Thread(target=self.__update_withdrawn)
             self.widthdraw_thread.start()
 
-            self.image = Image.open(os.path.dirname(os.path.abspath(__file__)) + '/assets/icon.ico')
+            self.image = Image.open(images.icon)
             self.menu = (item('Quit', self.close_application), item('Show', self.show_application, default=True))
             self.icon = pystray.Icon('WAB', self.image, 'Webcam Adaptive-Brightness', self.menu)
             self.icon.run()

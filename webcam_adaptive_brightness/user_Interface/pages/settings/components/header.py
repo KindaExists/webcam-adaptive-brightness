@@ -7,7 +7,7 @@ import customtkinter as ctk
 from tkinter import messagebox
 
 from user_interface.constants import COLOR, TEXT_FACTOR
-
+from user_interface import images
 
 class HeaderFrame(ctk.CTkFrame):
     def __init__(self, master, controller):
@@ -71,7 +71,7 @@ class TitleFrame(ctk.CTkFrame):
 class HomeButton(ctk.CTkButton):
     def __init__(self, master, controller):
         self.controller = controller
-        self.back_icon = tk.PhotoImage(file=os.path.abspath(__file__+'/../../../../assets/arrow_back_white.png'))
+        self.back_icon = tk.PhotoImage(data=images.arrow_back_white)
 
         super().__init__(
             master,
