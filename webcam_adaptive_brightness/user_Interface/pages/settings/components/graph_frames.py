@@ -258,10 +258,19 @@ class GraphCanvas(tk.Canvas):
             self.set_point_position(point, x, y)
 
     def set_point_position(self, point_id, x, y):
-        old_x = self.coords(point_id)[0] + self.point_radius
-        old_y = self.coords(point_id)[1] + self.point_radius
-        delta_x = x - old_x
-        delta_y = y - old_y
+        item_index = self.points.index(point_id)
+        other_x = self.coords(self.points[item_index-1])[0] + self.point_radius
+
+        item_x = self.coords(point_id)[0] + self.point_radius
+        item_y = self.coords(point_id)[1] + self.point_radius
+
+        delta_x = x - item_x
+        delta_y = y - item_y
+
+        if item_index == 0 and (item_x + delta_x >= other_x):
+            delta_x = other_x - item_x + (-1.0)
+        elif item_index == 1 and (item_x + delta_x <= other_x):
+            delta_x = other_x - item_x + (1.0)
 
         self.move(point_id, delta_x, delta_y)
         self.create_line_curve()
@@ -298,26 +307,41 @@ class GraphCanvas(tk.Canvas):
         if self._drag_data["item"] is None:
             return
 
+        item_index = self.points.index(self._drag_data["item"])
+
         item_x = self.coords(self._drag_data["item"])[0] + self.point_radius
         item_y = self.coords(self._drag_data["item"])[1] + self.point_radius
+
+        other_x = self.coords(self.points[item_index-1])[0] + self.point_radius
 
         # compute how much the mouse has moved
         delta_x = event.x - self._drag_data["x"]
         delta_y = event.y - self._drag_data["y"]
 
-        if delta_x > 0 and event.x < 0:
-            delta_x = 0
-        if delta_x < 0 and event.x >= 200:
-            delta_x = 0
-        if delta_y > 0 and event.y < 0:
-            delta_y = 0
-        if delta_y < 0 and event.y >= 200:
+        if item_index == 0:
+            if (delta_x > 0 and event.x < 0) or \
+               (delta_x < 0 and event.x >= other_x):
+                delta_x = 0
+        else:
+            if (delta_x > 0 and event.x <= other_x) or \
+               (delta_x < 0 and event.x >= 200):
+                delta_x = 0
+
+        if (delta_y > 0 and event.y < 0) or \
+           (delta_y < 0 and event.y >= 200):
             delta_y = 0
 
-        if (item_x + delta_x < 0):
-            delta_x = -item_x
-        elif (item_x + delta_x >= self.width):
-            delta_x = self.width - item_x
+        if item_index == 0:
+            if (item_x + delta_x < 0):
+                delta_x = -item_x
+            elif (item_x + delta_x >= other_x):
+                delta_x = other_x - item_x + (-1.0)
+        else:
+            if (item_x + delta_x <= other_x):
+                delta_x = other_x - item_x + (1.0)
+            elif (item_x + delta_x >= self.width):
+                delta_x = self.width - item_x
+
         if (item_y + delta_y < 0):
             delta_y = -item_y
         elif (item_y + delta_y >= self.height):
@@ -359,10 +383,6 @@ class GraphCanvas(tk.Canvas):
                 self.coords(point)[0] + self.point_radius,
                 self.coords(point)[1] + self.point_radius
             ))
-
-        for point_index in range(0, point_count - 1):
-            if positions[point_index][0] >= positions[point_index + 1][0]:
-                color = COLOR['error']
 
         self.delete('lines')
 

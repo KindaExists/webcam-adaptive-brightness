@@ -469,8 +469,8 @@ class RightBodyFrame(ctk.CTkFrame):
     def update_entries(self):
         if self.last_selected_point is not None:
             x, y = self.canvas_ref.get_point_percentages(self.last_selected_point)
-            self.ambient_value_variable.set(x)
-            self.screen_value_variable.set(y)
+            self.ambient_value_variable.set(round(x, 1))
+            self.screen_value_variable.set(round(y, 1))
 
     def update_graph(self):
         if self.last_selected_point is not None:
