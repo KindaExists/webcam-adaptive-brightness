@@ -13,7 +13,7 @@ COLOR = {
     'highlight':'#c7e2f2',
     'fg'    :'#5B9BD5',
     'hover' :'#364A5B',
-    'error' :'#FF5050',
+    'error' :'#CE4B4B',
     'error_dark' :'#A3001E',
 }
 
