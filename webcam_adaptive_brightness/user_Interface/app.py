@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import os
+import os, sys
+import base64
 import threading
 import time
+import io
 
 import tkinter as tk
 import customtkinter as ctk
@@ -32,7 +34,21 @@ class App(ctk.CTk):
         self.geometry(f'{self.window_size[0]}x{self.window_size[1]}+{positionRight}+{positionDown}')
         self.resizable(False, False)
 
-        self.iconbitmap(images.icon)
+        if os.path.isfile('icon.ico'):
+            if getattr(sys, 'frozen', False):
+                self.iconbitmap(os.path.abspath(os.path.dirname(sys.executable) + '/icon.ico'))
+            else:
+                self.iconbitmap(os.path.abspath(os.path.dirname(__file__) + '/icon.ico'))
+        else:
+            icon_data = base64.b64decode(images.icon)
+            temp_file = 'icon.ico'
+            with open(temp_file, 'wb') as icon_file:
+                icon_file.write(icon_data)
+            self.iconbitmap(temp_file)
+            os.remove(temp_file)
+
+
+
         self.protocol('WM_DELETE_WINDOW', self.close_application)
 
         self.maximized = True
@@ -85,7 +101,7 @@ class App(ctk.CTk):
             self.widthdraw_thread = threading.Thread(target=self.__update_withdrawn)
             self.widthdraw_thread.start()
 
-            self.image = Image.open(images.icon)
+            self.image = Image.open(io.BytesIO(base64.b64decode(images.icon)))
             self.menu = (item('Quit', self.close_application), item('Show', self.show_application, default=True))
             self.icon = pystray.Icon('WAB', self.image, 'Webcam Adaptive-Brightness', self.menu)
             self.icon.run()
