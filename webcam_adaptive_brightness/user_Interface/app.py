@@ -106,6 +106,7 @@ class App(ctk.CTk):
             'ambient_out': self.home_frame.body_frame.ambient_display_frame.ambient_value_frame,
             'screen_out': self.home_frame.body_frame.screen_display_frame.screen_value_frame,
             'webcam_out': self.home_frame.body_frame.webcam_display_frame,
+            'active_out': self.home_frame.footer_frame,
             'description_out': self.settings_frame.body_frame.left_body_frame.settings_description.description_text,
             'apply_btn': self.settings_frame.body_frame.left_body_frame.settings_apply,
             'device_in': self.settings_frame.body_frame.left_body_frame.settings_main.device_input_frame.device_input,
@@ -190,8 +191,13 @@ class App(ctk.CTk):
             else:
                 self.set_ambient_display('---')
                 self.set_screen_display('---')
+            self.io_directory['active_out'].set_webcam_name()
             self.__update_webcam_display()
-
+        if had_update is None:
+            self.io_directory['active_out'].set_webcam_name()
+            self.set_ambient_display('---')
+            self.set_screen_display('---')
+            self.set_webcam_display(False)
         self.after(100, self.update_values)
 
     def __update_webcam_display(self):

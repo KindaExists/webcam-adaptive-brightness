@@ -23,7 +23,6 @@ class Webcam:
         return gray
 
     def get_capture(self, compression_factor=1):
-        print()
         if self.active_cam_in_list():
             self.has_opened = True
             ret_val, frame = self.vc.read()

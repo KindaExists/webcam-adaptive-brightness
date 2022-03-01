@@ -251,7 +251,7 @@ class WebcamDisplayFrame(ctk.CTkFrame):
 
         self.webcam_disabled_label = tk.Label(
             self,
-            text='Webcam Preview Disabled',
+            text='Webcam Preview Inactive',
             font=('Bahnschrift Light', 11),
             bg=COLOR['black'],
             fg=COLOR['white'],

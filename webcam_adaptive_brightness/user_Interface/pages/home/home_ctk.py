@@ -36,5 +36,5 @@ class HomeFrame(ctk.CTkFrame):
         self.body_frame = BodyFrame(self, self.controller)
         self.body_frame.grid(column=0, row=1, sticky='nswe')
 
-        self.footer_frame = FooterFrame(self)
+        self.footer_frame = FooterFrame(self, self.controller)
         self.footer_frame.grid(column=0, row=2, sticky='nswe')

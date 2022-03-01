@@ -27,7 +27,7 @@ class DeviceInputFrame(ctk.CTkFrame):
 
         self.is_valid = True
         self.description = '\n\nChange the webcam device being used by the Application.'
-        self.error_text = '\nSelected webcam not found. Please choose a different one.'
+        self.error_text = '\nSelected webcam not found. Refresh/choose a different one.'
 
         self.bind('<Enter>', self.set_description)
         self.bind('<Leave>', self.remove_description)

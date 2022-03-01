@@ -48,7 +48,7 @@ class Core:
             # Measure brightness and insert into filter
             self.capture = self.webcam.get_capture(compression_factor=2)
             if self.capture is None:
-                return
+                return None
 
             self.measured_brightness = self.webcam.get_frame_brightness(self.capture)
             self.brightness_filter.insert(self.measured_brightness)
@@ -61,13 +61,11 @@ class Core:
                 # before updating screen brightness
                 threshold_diff = abs(ambient_brightness - self.threshold_basis)
                 if threshold_diff >= self.configs.get_setting('threshold') * ((self.display.ambient_range[-1] / 100) + self.display.ambient_range[0]):
-                    """
                     self.display.update_screen_brightness(
                         ambient_brightness,
                         self.configs.get_setting('ambient_percentages'),
                         self.configs.get_setting('screen_percentages')
                     )
-                    """
 
                     # Sets new threshold basis
                     self.threshold_basis = ambient_brightness
