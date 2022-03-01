@@ -50,7 +50,7 @@ class TitleFrame(ctk.CTkFrame):
     def __init_widgets(self):
         title = tk.Label(
             self,
-            text='WAABA 0.1.0',
+            text='WAB 1.0.0',
             font=('Bahnschrift Bold', round(14 * TEXT_FACTOR)),
             justify='left',
             bg=COLOR['dark_gray_3'],
