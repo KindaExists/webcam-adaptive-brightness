@@ -1,11 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import cv2 as cv
-
+from pygrabber.dshow_graph import FilterGraph
 
 class Webcam:
     def __init__(self):
-        self.vc = cv.VideoCapture(cv.CAP_DSHOW)
+        self.vc = cv.VideoCapture()
+
+        self.active_cam_name = None
+        self.graph = FilterGraph()
+
+        self.cam_listed = False
 
     def get_frame_brightness(self, frame):
         gray = self.convert_gray(frame)
@@ -18,26 +23,35 @@ class Webcam:
         return gray
 
     def get_capture(self, compression_factor=1):
-        _, frame = self.vc.read()
-        compressed = cv.resize(frame, (frame.shape[1] // compression_factor,
+        print()
+        if self.active_cam_in_list():
+            self.has_opened = True
+            ret_val, frame = self.vc.read()
+            if ret_val:
+                compressed = cv.resize(frame, (frame.shape[1] // compression_factor,
                                        frame.shape[0] // compression_factor))
-        return compressed
+                return compressed
+        self.has_opened = False
+        return None
 
-    def open(self, cam_id):
-        self.vc.open(cam_id)
+    def open(self, cam_name):
+        self.active_cam_name = cam_name
+        try:
+            cam_id = self.list_cameras().index(cam_name)
+        except ValueError:
+            cam_id = -1
 
-        # Saves exposure settings
+        self.vc.open(cam_id, cv.CAP_MSMF)
+
+        # Saves default auto-exposure settings
         self.def_auto = self.vc.get(cv.CAP_PROP_AUTO_EXPOSURE)
-        # self.def_exposure = self.vc.get(cv.CAP_PROP_EXPOSURE)
-
-        # Sets exposure to 100% and auto-exposure to 0%
+        # Sets auto-exposure to 0%
         self.vc.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.0)
-        # self.vc.set(cv.CAP_PROP_EXPOSURE, 1.0)
 
     def release(self):
+        self.has_opened = False
+        self.active_cam_name = None
         self.vc.set(cv.CAP_PROP_AUTO_EXPOSURE, self.def_auto)
-        # self.vc.set(cv.CAP_PROP_EXPOSURE, self.def_exposure)
-
         self.vc.release()
 
     def show_image(self, window_name, frame):
@@ -45,3 +59,9 @@ class Webcam:
 
     def close_windows(self):
         cv.destroyAllWindows()
+
+    def list_cameras(self):
+        return self.graph.get_input_devices()
+
+    def active_cam_in_list(self):
+        return self.active_cam_name in self.list_cameras()

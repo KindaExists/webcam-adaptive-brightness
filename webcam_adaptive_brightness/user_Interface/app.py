@@ -93,6 +93,10 @@ class App(ctk.CTk):
         if frame_name == 'home':
             self.home_frame.tkraise()
         if frame_name == 'settings':
+            self.io_directory['device_in'].update_device_list()
+            is_device_input_valid = self.io_directory['device_in'].parent.get_save_validity()
+            self.io_directory['device_in'].parent.set_invalid_color(is_device_input_valid)
+
             self.settings_frame.tkraise()
 
 
@@ -150,7 +154,7 @@ class App(ctk.CTk):
             new_settings['ambient_percentages'] = [ambient_a, ambient_b]
             new_settings['screen_percentages'] = [screen_a, screen_b]
 
-            new_settings['device_id'] = self.io_directory['device_in'].get_value()
+            new_settings['device_name'] = self.io_directory['device_in'].get_value()
             new_settings['preview_enabled'] = self.io_directory['preview_in'].get_value()
 
             self.core.configs.save_configs(new_config)
@@ -171,7 +175,7 @@ class App(ctk.CTk):
         screen = settings['screen_percentages']
         self.io_directory['graph_in'].set_all_percentages(ambient, screen)
 
-        self.io_directory['device_in'].set_value(settings['device_id'])
+        self.io_directory['device_in'].set_value(settings['device_name'])
         self.io_directory['preview_in'].set_value(settings['preview_enabled'])
 
         self.disable_save()
@@ -180,20 +184,26 @@ class App(ctk.CTk):
     def update_values(self):
         had_update = self.core.update()
         if had_update:
-            self.set_ambient_display(self.core.get_last_ambient_brightness())
-            self.set_screen_display(self.core.get_last_screen_brightness())
+            if self.core.webcam.active_cam_in_list():
+                self.set_ambient_display(self.core.get_last_ambient_brightness())
+                self.set_screen_display(self.core.get_last_screen_brightness())
+            else:
+                self.set_ambient_display('---')
+                self.set_screen_display('---')
             self.__update_webcam_display()
 
         self.after(100, self.update_values)
 
     def __update_webcam_display(self):
-        if self.core.configs.get_setting('preview_enabled'):
+        if self.core.configs.get_setting('preview_enabled') and self.core.webcam.active_cam_in_list():
             cap = self.core.get_converted_capture()
-            img = Image.fromarray(cap)
-            imgtk = ImageTk.PhotoImage(img)
-            self.set_webcam_display(imgtk)
-        else:
-            self.set_webcam_display(False)
+            if not cap is None:
+                img = Image.fromarray(cap)
+                imgtk = ImageTk.PhotoImage(img)
+                self.set_webcam_display(imgtk)
+            return
+
+        self.set_webcam_display(False)
 
     def __update_withdrawn(self):
         # Run algorithm while tkinter window is withdrawn
@@ -201,8 +211,17 @@ class App(ctk.CTk):
             self.core.update()
             time.sleep(0.1)
 
+    def refresh_devices(self):
+        is_device_input_valid = self.io_directory['device_in'].parent.get_save_validity()
+        self.io_directory['device_in'].parent.set_invalid_color(is_device_input_valid)
+
+        self.core.refresh_devices()
+        self.io_directory['device_in'].update_device_list()
 
     def validate_setting_inputs(self):
+        is_device_input_valid = self.io_directory['device_in'].parent.get_save_validity()
+        self.io_directory['device_in'].parent.set_invalid_color(is_device_input_valid)
+
         is_interval_input_valid = self.io_directory['interval_in'].get_save_validity()
         self.io_directory['interval_in'].set_invalid_color(is_interval_input_valid)
 

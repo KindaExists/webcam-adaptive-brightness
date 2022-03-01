@@ -14,6 +14,7 @@ COLOR = {
     'fg'    :'#5B9BD5',
     'hover' :'#364A5B',
     'error' :'#FF5050',
+    'error_dark' :'#A3001E',
 }
 
 SCALE_FACTOR = ctypes.windll.shcore.GetScaleFactorForDevice(0) / 100

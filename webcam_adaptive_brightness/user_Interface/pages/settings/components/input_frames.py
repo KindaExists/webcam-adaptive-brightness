@@ -14,8 +14,6 @@ from user_interface.constants import COLOR
 # Webcam Device Input Frame
 # ===================================================
 
-webcam_list = ['0', '1', '2']
-
 class DeviceInputFrame(ctk.CTkFrame):
     def __init__(self, master, controller):
         self.parent = master
@@ -29,7 +27,7 @@ class DeviceInputFrame(ctk.CTkFrame):
 
         self.is_valid = True
         self.description = '\n\nChange the webcam device being used by the Application.'
-        self.error_text = '\nWebcam ID not found. Please choose a different ID.'
+        self.error_text = '\nSelected webcam not found. Please choose a different one.'
 
         self.bind('<Enter>', self.set_description)
         self.bind('<Leave>', self.remove_description)
@@ -63,6 +61,44 @@ class DeviceInputFrame(ctk.CTkFrame):
     def remove_description(self, event):
         self.controller.remove_setting_description()
 
+    def get_save_validity(self):
+        if self.device_input.get_value() in self.controller.core.webcam.list_cameras():
+            self.is_valid = True
+            return True
+        else:
+            self.is_valid = False
+            return False
+
+    def set_invalid_color(self, is_valid):
+        if is_valid:
+            self.device_input.configure(
+                fg_color=COLOR['dark_gray_3']
+            )
+            self.device_input.device_menu.configure(
+                background=COLOR['dark_gray_3'],
+                highlightbackground=COLOR['dark_gray_3'],
+                highlightcolor=COLOR['dark_gray_3'],
+                activebackground=COLOR['dark_gray_3'],
+            )
+            self.device_input.refresh_button.configure(
+                fg_color=COLOR['dark_gray_4'],
+                hover_color=COLOR['hover']
+            )
+        else:
+            self.device_input.configure(
+                fg_color=COLOR['error']
+            )
+            self.device_input.device_menu.configure(
+                background=COLOR['error'],
+                highlightbackground=COLOR['error'],
+                highlightcolor=COLOR['error'],
+                activebackground=COLOR['error'],
+            )
+            self.device_input.refresh_button.configure(
+                fg_color=COLOR['error_dark'],
+                hover_color=COLOR['error_dark']
+            )
+
 
 class DeviceInput(ctk.CTkFrame):
     def __init__(self, master, controller):
@@ -85,15 +121,17 @@ class DeviceInput(ctk.CTkFrame):
         self.__init_widgets()
 
     def __init_widgets(self):
-        self.expand_icon = tk.PhotoImage(file=os.path.abspath(__file__+'/../../../../assets/outline_expand_white.png'))
+        self.refresh_icon = tk.PhotoImage(file=os.path.abspath(__file__+'/../../../../assets/outline_refresh_white.png'))
         self.device_variable = tk.StringVar()
+
+        self.webcam_list = self.controller.core.webcam.list_cameras()
 
         self.device_menu = tk.OptionMenu(
             self,
             self.device_variable,
-            *webcam_list,
+            *self.webcam_list,
         )
-        self.device_variable.set(webcam_list[0])
+        self.device_variable.set(self.webcam_list[0])
 
         self.device_menu.configure(
             width=16,
@@ -119,13 +157,29 @@ class DeviceInput(ctk.CTkFrame):
             cursor='hand2',
         )
         self.device_menu.grid(column=0, row=0, sticky='ns')
-        expand_button = tk.Label(
+        self.refresh_button = ctk.CTkButton(
             self,
-            background=COLOR['dark_gray_3'],
-            image=self.expand_icon,
-            height=40,
+            text='',
+            bg_color=COLOR['dark_gray_3'],
+            fg_color=COLOR['dark_gray_4'],
+            hover_color=COLOR['hover'],
+            text_color=COLOR['white'],
+
+            image=self.refresh_icon,
+            height=30,
+            width=30,
+            corner_radius=5,
         )
-        expand_button.place(relx=0.87, rely=0.5, anchor='center')
+        self.refresh_button.canvas.configure(
+            cursor='hand2'
+        )
+        self.refresh_button.image_label.configure(
+            cursor='hand2'
+        )
+        self.refresh_button.place(relx=0.87, rely=0.5, anchor='center')
+
+        self.bind_tree(self.refresh_button, '<Button-1>', self.__refresh_clicked)
+        self.bind_tree(self.refresh_button, '<ButtonRelease-1>', self.__refresh_released)
 
         self.device_variable.trace_add(
             'write', lambda name, index, mode, var=self.device_variable: \
@@ -136,10 +190,53 @@ class DeviceInput(ctk.CTkFrame):
         self.controller.enable_save()
 
     def get_value(self):
-        return int(self.device_variable.get())
+        return self.device_variable.get()
 
     def set_value(self, new_value):
         self.device_variable.set(new_value)
+
+    def update_device_list(self):
+        self.webcam_list = self.controller.core.webcam.list_cameras()
+        menu = self.device_menu['menu']
+        menu.delete(0, 'end')
+        for device in self.webcam_list:
+            menu.add_command(label=device,
+                             command=lambda device=device: self.device_variable.set(device))
+
+
+    def bind_tree(self, master_widger, event, master_callback):
+        # Binds an event to a widget and all its descendants
+        master_widger.bind(event, master_callback)
+
+        for child in master_widger.children.values():
+            self.bind_tree(child, event, master_callback)
+
+    def __refresh_clicked(self, event):
+        if self.parent.is_valid:
+            self.refresh_button.configure(
+                fg_color=COLOR['fg'],
+            )
+        else:
+            self.refresh_button.configure(
+                fg_color=COLOR['error'],
+            )
+        self.controller.refresh_devices()
+
+    def __refresh_released(self, event):
+        if self.parent.is_valid:
+            self.refresh_button.configure(
+                fg_color=COLOR['dark_gray_4'],
+            )
+        else:
+            self.refresh_button.configure(
+                fg_color=COLOR['error_dark'],
+            )
+        self.controller.refresh_devices()
+        if self.parent.is_valid:
+            self.refresh_button.configure(
+                fg_color=COLOR['dark_gray_4'],
+            )
+
 
 
 # ===================================================
@@ -222,7 +319,7 @@ class IntervalInputFrame(ctk.CTkFrame):
         self.controller.enable_save()
 
     def get_value(self):
-        return int(self.interval_variable.get() or 1)
+        return float(self.interval_variable.get() or 1.0)
 
     def set_value(self, new_value):
         self.interval_variable.set(new_value)
