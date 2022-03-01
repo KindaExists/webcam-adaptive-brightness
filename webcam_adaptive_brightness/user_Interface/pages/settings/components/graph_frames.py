@@ -5,7 +5,7 @@ import os
 import tkinter as tk
 import numpy as np
 
-from user_interface.constants import COLOR
+from user_interface.constants import COLOR, TEXT_FACTOR
 
 class GraphMainFrame(tk.Frame):
     def __init__(self, master, controller):
@@ -65,7 +65,7 @@ class GraphInputFrame(tk.Frame):
         self.top_variable = tk.StringVar()
         self.top_label = tk.Label(
             self,
-            font=('Bahnschrift', 9),
+            font=('Bahnschrift', round(9 * TEXT_FACTOR)),
             textvariable=self.top_variable,
             justify='center',
             anchor='s',
@@ -82,7 +82,7 @@ class GraphInputFrame(tk.Frame):
         self.left_variable = tk.StringVar()
         self.left_label = tk.Label(
             self,
-            font=('Bahnschrift', 9),
+            font=('Bahnschrift', round(9 * TEXT_FACTOR)),
             textvariable=self.left_variable,
             justify='right',
             anchor='e',
@@ -99,7 +99,7 @@ class GraphInputFrame(tk.Frame):
         self.bottom_variable = tk.StringVar()
         self.bottom_label = tk.Label(
             self,
-            font=('Bahnschrift', 9),
+            font=('Bahnschrift', round(9 * TEXT_FACTOR)),
             textvariable=self.bottom_variable,
             justify='center',
             anchor='n',
@@ -116,7 +116,7 @@ class GraphInputFrame(tk.Frame):
         self.right_variable = tk.StringVar()
         self.right_label = tk.Label(
             self,
-            font=('Bahnschrift', 9),
+            font=('Bahnschrift', round(9 * TEXT_FACTOR)),
             textvariable=self.right_variable,
             justify='left',
             anchor='w',

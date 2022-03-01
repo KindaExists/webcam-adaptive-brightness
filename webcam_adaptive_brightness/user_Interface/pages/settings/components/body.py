@@ -9,7 +9,7 @@ import numpy as np
 
 from user_interface.pages.settings.components.input_frames import *
 from user_interface.pages.settings.components.graph_frames import *
-from user_interface.constants import COLOR
+from user_interface.constants import COLOR, TEXT_FACTOR
 
 
 class BodyFrame(ctk.CTkFrame):
@@ -147,7 +147,7 @@ class SettingsDescriptionText(tk.Text):
         self.controller = controller
         super().__init__(
             master,
-            font=('Bahnschrift Light', 10),
+            font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
 
             bd=0,
             wrap=tk.WORD,
@@ -161,7 +161,7 @@ class SettingsDescriptionText(tk.Text):
         )
         self.tag_configure('minimal', justify=tk.CENTER, foreground=COLOR['light_gray_1'])
         self.tag_configure('normal', justify=tk.CENTER)
-        self.tag_configure('error', justify=tk.CENTER, font=('Bahnschrift Bold', 10), foreground=COLOR['error'])
+        self.tag_configure('error', justify=tk.CENTER, font=('Bahnschrift Bold', round(10 * TEXT_FACTOR)), foreground=COLOR['error'])
         self.set_default_text()
 
     def set_default_text(self):
@@ -210,7 +210,7 @@ class ApplySettingsButton(ctk.CTkButton):
         super().__init__(
             master,
             text='Apply Settings',
-            text_font=('Bahnschrift SemiBold', 10),
+            text_font=('Bahnschrift SemiBold', round(10 * TEXT_FACTOR)),
             image=self.save_icon,
 
             bg_color=COLOR['dark_gray_2'],
@@ -268,7 +268,7 @@ class ResetSettingsButton(ctk.CTkButton):
         super().__init__(
             master,
             text='Reset Changes',
-            text_font=('Bahnschrift SemiBold', 10),
+            text_font=('Bahnschrift SemiBold', round(10 * TEXT_FACTOR)),
 
             bg_color=COLOR['dark_gray_2'],
             fg_color=COLOR['dark_gray_4'],
@@ -370,7 +370,7 @@ class RightBodyFrame(ctk.CTkFrame):
         self.ambient_value_label = tk.Label(
             point_values_frame,
             text='Ambient %',
-            font=('Bahnschrift Light', 10),
+            font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             justify='center',
             bg=COLOR['dark_gray_2'],
             fg=COLOR['white'],
@@ -380,7 +380,7 @@ class RightBodyFrame(ctk.CTkFrame):
         self.screen_value_label = tk.Label(
             point_values_frame,
             text='Screen %',
-            font=('Bahnschrift Light', 10),
+            font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             justify='center',
             bg=COLOR['dark_gray_2'],
             fg=COLOR['white'],
@@ -390,7 +390,7 @@ class RightBodyFrame(ctk.CTkFrame):
 
         self.ambient_value_entry = ctk.CTkEntry(
             point_values_frame,
-            text_font=('Bahnschrift Light', 10),
+            text_font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             justify='center',
 
             bg_color=COLOR['dark_gray_2'],
@@ -417,7 +417,7 @@ class RightBodyFrame(ctk.CTkFrame):
 
         self.screen_value_entry = ctk.CTkEntry(
             point_values_frame,
-            text_font=('Bahnschrift Light', 10),
+            text_font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             justify='center',
 
             bg_color=COLOR['dark_gray_2'],

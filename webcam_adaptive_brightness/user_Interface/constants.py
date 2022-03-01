@@ -17,5 +17,7 @@ COLOR = {
     'error_dark' :'#A3001E',
 }
 
+# Used for resizing text on different systems with different Window scalling
+# In my case my windows scalling is around 1.25 so that's the numerator
 SCALE_FACTOR = ctypes.windll.shcore.GetScaleFactorForDevice(0) / 100
-TEXT_FACTOR = 1 / SCALE_FACTOR
+TEXT_FACTOR = 1.25 / SCALE_FACTOR

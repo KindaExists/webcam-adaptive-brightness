@@ -3,7 +3,7 @@
 import tkinter as tk
 import customtkinter as ctk
 
-from user_interface.constants import COLOR
+from user_interface.constants import COLOR, TEXT_FACTOR
 
 
 class BodyFrame(ctk.CTkFrame):
@@ -84,7 +84,7 @@ class AmbientLabelFrame(ctk.CTkFrame):
         self.label = tk.Label(
             self,
             text='Ambient Brightness',
-            font=('Bahnschrift Light', 11),
+            font=('Bahnschrift Light', round(11 * TEXT_FACTOR)),
 
             bg=COLOR['dark_gray_3'],
             fg=COLOR['white'],
@@ -114,7 +114,7 @@ class AmbientValueFrame(ctk.CTkFrame):
         self.value = tk.Label(
             self,
             text=f'---%',
-            font=('Monospace', 36),
+            font=('Monospace', round(36 * TEXT_FACTOR)),
 
             bg=COLOR['dark_gray_3'],
             fg=COLOR['white'],
@@ -173,7 +173,7 @@ class ScreenLabelFrame(ctk.CTkFrame):
         self.label = tk.Label(
             self,
             text='Screen Brightness',
-            font=('Bahnschrift Light', 11),
+            font=('Bahnschrift Light', round(11 * TEXT_FACTOR)),
 
             bg=COLOR['dark_gray_3'],
             fg=COLOR['white'],
@@ -203,7 +203,7 @@ class ScreenValueFrame(ctk.CTkFrame):
         self.value = tk.Label(
             self,
             text=f'---%',
-            font=('Monospace', 36),
+            font=('Monospace', round(36 * TEXT_FACTOR)),
 
             bg=COLOR['dark_gray_3'],
             fg=COLOR['white'],
@@ -232,7 +232,7 @@ class WebcamDisplayFrame(ctk.CTkFrame):
         self.label = tk.Label(
             self,
             text='Webcam Preview',
-            font=('Bahnschrift Light', 11),
+            font=('Bahnschrift Light', round(11 * TEXT_FACTOR)),
             bg=COLOR['dark_gray_3'],
             fg=COLOR['white'],
             justify='center',
@@ -252,7 +252,7 @@ class WebcamDisplayFrame(ctk.CTkFrame):
         self.webcam_disabled_label = tk.Label(
             self,
             text='Webcam Preview Inactive',
-            font=('Bahnschrift Light', 11),
+            font=('Bahnschrift Light', round(11 * TEXT_FACTOR)),
             bg=COLOR['black'],
             fg=COLOR['white'],
             width=340,

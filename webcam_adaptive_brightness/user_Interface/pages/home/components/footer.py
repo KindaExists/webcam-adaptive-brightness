@@ -3,7 +3,7 @@
 import tkinter as tk
 import customtkinter as ctk
 
-from user_interface.constants import COLOR
+from user_interface.constants import COLOR, TEXT_FACTOR
 
 
 class FooterFrame(ctk.CTkFrame):
@@ -25,7 +25,7 @@ class FooterFrame(ctk.CTkFrame):
         self.label = tk.Label(
             self,
             textvariable=self.label_variable,
-            font=('Bahnschrift Light', 10),
+            font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
 
             bg=COLOR['dark_gray_3'],
             fg=COLOR['white'],

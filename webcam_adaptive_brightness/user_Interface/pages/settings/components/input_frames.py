@@ -7,7 +7,7 @@ import tkinter as tk
 from tkinter import ttk
 import customtkinter as ctk
 
-from user_interface.constants import COLOR
+from user_interface.constants import COLOR, TEXT_FACTOR
 
 
 # ===================================================
@@ -43,7 +43,7 @@ class DeviceInputFrame(ctk.CTkFrame):
     def __init_widgets(self):
         device_label = tk.Label(
             self,
-            font=('Bahnschrift Light', 10),
+            font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             text='Device: ',
             justify='left',
 
@@ -135,7 +135,7 @@ class DeviceInput(ctk.CTkFrame):
 
         self.device_menu.configure(
             width=16,
-            font=('Bahnschrift Light', 10),
+            font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             anchor=tk.W,
             background=COLOR['dark_gray_3'],
             foreground=COLOR['white'],
@@ -280,7 +280,7 @@ class IntervalInputFrame(ctk.CTkFrame):
 
         interval_label = tk.Label(
             self,
-            font=('Bahnschrift Light', 10),
+            font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             text='Interval: ',
             justify='left',
 
@@ -292,7 +292,7 @@ class IntervalInputFrame(ctk.CTkFrame):
         self.interval_variable = tk.StringVar()
         self.interval_input = ctk.CTkEntry(
             self,
-            text_font=('Bahnschrift Light', 10),
+            text_font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             justify='left',
 
             bg_color=COLOR['dark_gray_2'],
@@ -404,7 +404,7 @@ class ThresholdInputFrame(ctk.CTkFrame):
 
         threshold_label = tk.Label(
             self,
-            font=('Bahnschrift Light', 10),
+            font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             text='Threshold %: ',
             justify='left',
 
@@ -416,7 +416,7 @@ class ThresholdInputFrame(ctk.CTkFrame):
         self.threshold_variable = tk.StringVar()
         self.threshold_input = ctk.CTkEntry(
             self,
-            text_font=('Bahnschrift Light', 10),
+            text_font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             justify='left',
 
             bg_color=COLOR['dark_gray_2'],
@@ -527,7 +527,7 @@ class SamplesInputFrame(ctk.CTkFrame):
 
         samples_label = tk.Label(
             self,
-            font=('Bahnschrift Light', 10),
+            font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             text='Sample Rate:',
             justify='left',
 
@@ -539,7 +539,7 @@ class SamplesInputFrame(ctk.CTkFrame):
         self.samples_variable = tk.StringVar()
         self.samples_input = ctk.CTkEntry(
             self,
-            text_font=('Bahnschrift Light', 10),
+            text_font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             justify='left',
 
             bg_color=COLOR['dark_gray_2'],
@@ -641,7 +641,7 @@ class PreviewCheckboxFrame(ctk.CTkFrame):
         preview_checkbox = ctk.CTkCheckBox(
             self,
             variable=self.preview_variable,
-            text_font=('Bahnschrift Light', 10),
+            text_font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             text='',
 
             bg_color=COLOR['dark_gray_2'],
@@ -661,7 +661,7 @@ class PreviewCheckboxFrame(ctk.CTkFrame):
 
         preview_label = tk.Label(
             self,
-            font=('Bahnschrift Light', 10),
+            font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
             text='Enable Preview',
             justify='left',
             anchor='w',

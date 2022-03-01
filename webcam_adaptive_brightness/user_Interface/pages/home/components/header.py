@@ -5,7 +5,7 @@ import os
 import tkinter as tk
 import customtkinter as ctk
 
-from user_interface.constants import COLOR
+from user_interface.constants import COLOR, TEXT_FACTOR
 
 
 class HeaderFrame(ctk.CTkFrame):
@@ -50,7 +50,7 @@ class TitleFrame(ctk.CTkFrame):
         title = tk.Label(
             self,
             text='WAABA 0.1.0',
-            font=('Bahnschrift Bold', 14),
+            font=('Bahnschrift Bold', round(14 * TEXT_FACTOR)),
             justify='left',
             bg=COLOR['dark_gray_3'],
             fg=COLOR['white'],
@@ -60,7 +60,7 @@ class TitleFrame(ctk.CTkFrame):
         subtitle = tk.Label(
             self,
             text='| Home',
-            font=('Bahnschrift Light', 14),
+            font=('Bahnschrift Light', round(14 * TEXT_FACTOR)),
             justify='left',
             bg=COLOR['dark_gray_3'],
             fg=COLOR['white'],
@@ -75,7 +75,7 @@ class SettingsButton(ctk.CTkButton):
         super().__init__(
             master,
             text='Settings',
-            text_font=('Bahnschrift SemiBold', 10),
+            text_font=('Bahnschrift SemiBold', round(10 * TEXT_FACTOR)),
             image=self.settings_icon,
 
             bg_color=COLOR['dark_gray_3'],
