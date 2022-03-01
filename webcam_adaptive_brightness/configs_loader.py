@@ -26,7 +26,7 @@ class Configs:
         new_settings['ambient_percentages'] = [0.0, 100.0]
         new_settings['screen_percentages'] = [0.0, 100.0]
         new_settings['device_name'] = False
-        new_settings['preview_enabled'] = True
+        new_settings['preview_enabled'] = False
 
         self.save_configs(new_config)
 
