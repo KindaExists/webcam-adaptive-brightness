@@ -47,6 +47,3 @@ class Configs:
             toml.dump(new_configs_dict, fp)
             self.configs = new_configs_dict
 
-if __name__=='__main__':
-    settings = Configs(os.path.abspath(os.path.dirname(__file__)+'/configs.toml'))
-    print(settings.get_configs())

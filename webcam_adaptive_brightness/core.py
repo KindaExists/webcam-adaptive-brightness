@@ -5,13 +5,16 @@ from display import Display
 from configs_loader import Configs
 from helper_classes import IntervalTimer, FilterMean
 
-import os
+import os, sys
 import cv2 as cv
 
 class Core:
     def __init__(self):
         # Load configuration/settings TOML file
-        self.configs = Configs(os.path.abspath(os.path.dirname(__file__)+'/configs.toml'))
+        if getattr(sys, 'frozen', False):
+            self.configs = Configs(os.path.abspath(os.path.dirname(sys.executable)+'/configs.toml'))
+        else:
+            self.configs = Configs(os.path.abspath(os.path.dirname(__file__)+'/configs.toml'))
 
         # Initially set to a large negative float so that threshold
         # will always change on first update
