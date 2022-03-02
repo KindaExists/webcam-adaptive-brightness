@@ -20,7 +20,7 @@ class Configs:
         new_config['settings'] = {}
         new_settings = new_config['settings']
 
-        new_settings['update_interval'] = 10.0
+        new_settings['update_interval'] = 5.0
         new_settings['threshold'] = 0.0
         new_settings['samples_per_update'] = 1
         new_settings['ambient_percentages'] = [0.0, 100.0]

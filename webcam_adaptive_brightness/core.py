@@ -108,10 +108,10 @@ class Core:
 
     def update_webcam_device(self):
         setting_device_name = self.configs.get_setting('device_name')
-        if self.webcam_device_name != setting_device_name:
-            self.webcam_device_name = setting_device_name
-            self.webcam.release()
-            self.webcam.open(setting_device_name)
+        if setting_device_name is False or self.webcam_device_name != setting_device_name:
+            self.refresh_devices()
+            return True
+        return False
 
     def __get_last_capture(self):
         return self.capture

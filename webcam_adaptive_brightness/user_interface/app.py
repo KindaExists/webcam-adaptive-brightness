@@ -34,20 +34,12 @@ class App(ctk.CTk):
         self.geometry(f'{self.window_size[0]}x{self.window_size[1]}+{positionRight}+{positionDown}')
         self.resizable(False, False)
 
-        if os.path.isfile('icon.ico'):
-            if getattr(sys, 'frozen', False):
-                self.iconbitmap(os.path.abspath(os.path.dirname(sys.executable) + '/icon.ico'))
-            else:
-                self.iconbitmap(os.path.abspath(os.path.dirname(__file__) + '/icon.ico'))
-        else:
-            icon_data = base64.b64decode(images.icon)
-            temp_file = 'icon.ico'
-            with open(temp_file, 'wb') as icon_file:
-                icon_file.write(icon_data)
-            self.iconbitmap(temp_file)
-            os.remove(temp_file)
-
-
+        icon_data = base64.b64decode(images.icon)
+        temp_file = 'icon.ico'
+        with open(temp_file, 'wb') as icon_file:
+            icon_file.write(icon_data)
+        self.iconbitmap(temp_file)
+        os.remove(temp_file)
 
         self.protocol('WM_DELETE_WINDOW', self.close_application)
 
@@ -178,7 +170,9 @@ class App(ctk.CTk):
             self.core.configs.save_configs(new_config)
             self.disable_save()
 
-            self.core.update_webcam_device()
+            webcam_changed = self.core.update_webcam_device()
+            if webcam_changed:
+                self.__update_webcam_display()
             self.core.update_helpers()
 
 

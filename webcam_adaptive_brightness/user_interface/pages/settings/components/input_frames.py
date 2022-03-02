@@ -177,7 +177,7 @@ class DeviceInput(ctk.CTkFrame):
         self.refresh_button.image_label.configure(
             cursor='hand2'
         )
-        self.refresh_button.place(relx=0.87, rely=0.5, anchor='center')
+        self.refresh_button.place(relx=0.88, rely=0.5, anchor='center')
 
         self.bind_tree(self.refresh_button, '<Button-1>', self.__refresh_clicked)
         self.bind_tree(self.refresh_button, '<ButtonRelease-1>', self.__refresh_released)
@@ -194,7 +194,10 @@ class DeviceInput(ctk.CTkFrame):
         return self.device_variable.get()
 
     def set_value(self, new_value):
-        self.device_variable.set(new_value)
+        if new_value is False:
+            self.device_variable.set('---')
+        else:
+            self.device_variable.set(new_value)
 
     def update_device_list(self):
         self.webcam_list = self.controller.core.webcam.list_cameras()
@@ -245,7 +248,7 @@ class DeviceInput(ctk.CTkFrame):
 #
 # Input type: float
 # Measurement: seconds(s)
-# Bounds: [1.0, 43200.0]
+# Bounds: [0.5, 43200.0]
 # ===================================================
 
 class IntervalInputFrame(ctk.CTkFrame):
@@ -261,8 +264,8 @@ class IntervalInputFrame(ctk.CTkFrame):
 
         self.is_valid = True
         self.description = '\nChange the interval of time (in seconds) it takes for the screen brightness to update. ' + \
-            'Accepted values range\nfrom 1 second to 43,200 seconds.'
-        self.error_text = 'Time interval should only be from 1 to 43,200 seconds.'
+            'Value cannot be below 0.5 seconds.'
+        self.error_text = 'Time interval cannot be below 0.5 seconds.'
 
         self.bind('<Enter>', self.set_description)
         self.bind('<Leave>', self.remove_description)
@@ -339,7 +342,7 @@ class IntervalInputFrame(ctk.CTkFrame):
 
 
     def get_save_validity(self):
-        if 1 <= self.get_value() <= 43200:
+        if 0.5 <= self.get_value():
             self.is_valid = True
             return True
         else:
@@ -384,8 +387,8 @@ class ThresholdInputFrame(ctk.CTkFrame):
         )
 
         self.is_valid = True
-        self.description = '\nChange the threshold amount (in percent) needed for the screen to change its brightness. ' + \
-            'Accepted values\nrange from 0% to 100%.'
+        self.description = '\nChange the threshold (in percent) needed for the screen to change its brightness. ' + \
+            'Accepted values range\nfrom 0% to 100%.'
         self.error_text = 'Threshold cannot be above 100%.'
 
         self.bind('<Enter>', self.set_description)
@@ -406,7 +409,7 @@ class ThresholdInputFrame(ctk.CTkFrame):
         threshold_label = tk.Label(
             self,
             font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
-            text='Threshold %: ',
+            text='Threshold (%): ',
             justify='left',
 
             bg=COLOR['dark_gray_2'],
@@ -507,9 +510,9 @@ class SamplesInputFrame(ctk.CTkFrame):
         )
 
         self.is_valid = True
-        self.description = '\nChange the number of webcam samples used when updating the screen brightness. ' + \
-            'Accepted values range from 1 to 10. Lower values will provide better performance.'
-        self.error_text = 'Sampling rate should only be from 1 to 10.'
+        self.description = '\nChange the number of webcam captures taken each interval. More captures will make ' + \
+            'screen brightness changes more smooth and steady. Accepted values range from 1 to 10.'
+        self.error_text = 'Capture rate should only be from 1 to 10.'
 
         self.bind('<Enter>', self.set_description)
         self.bind('<Leave>', self.remove_description)
@@ -529,7 +532,7 @@ class SamplesInputFrame(ctk.CTkFrame):
         samples_label = tk.Label(
             self,
             font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
-            text='Sample Rate:',
+            text='Capture Rate:',
             justify='left',
 
             bg=COLOR['dark_gray_2'],
