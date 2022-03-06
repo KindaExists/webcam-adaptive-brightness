@@ -117,6 +117,9 @@ class SettingsMainFrame(ctk.CTkFrame):
         self.preview_checkbox_frame = PreviewCheckboxFrame(self, self.controller)
         self.preview_checkbox_frame.grid(column=0, row=2, padx=(0, 10), sticky='nswe')
 
+        self.tray_checkbox_frame = TrayCheckboxFrame(self, self.controller)
+        self.tray_checkbox_frame.grid(column=1, row=2, padx=(10, 0), sticky='nswe')
+
 class SettingsDescriptionFrame(ctk.CTkFrame):
     def __init__(self, master, controller):
         self.parent = master

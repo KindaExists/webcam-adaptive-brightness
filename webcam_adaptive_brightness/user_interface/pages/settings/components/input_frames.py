@@ -694,3 +694,85 @@ class PreviewCheckboxFrame(ctk.CTkFrame):
 
     def remove_description(self, event):
         self.controller.remove_setting_description()
+
+
+class TrayCheckboxFrame(ctk.CTkFrame):
+    def __init__(self, master, controller):
+        self.parent = master
+        self.controller = controller
+        super().__init__(
+            master,
+            bg_color=COLOR['dark_gray_2'],
+            fg_color=COLOR['dark_gray_2'],
+            corner_radius=0,
+        )
+
+        self.description = '\n\nIf enabled, the application will minimize to system tray.'
+        self.warning = ''
+
+        self.bind('<Enter>', self.set_description)
+        self.bind('<Leave>', self.remove_description)
+
+        # Setup grid layout
+        self.columnconfigure(0)
+        self.columnconfigure(1, weight=1)
+        self.rowconfigure(0, weight=1)
+        self.grid_propagate(False)
+
+        self.__init_widgets()
+
+
+    def __init_widgets(self):
+        self.tray_variable = tk.BooleanVar()
+        tray_checkbox = ctk.CTkCheckBox(
+            self,
+            variable=self.tray_variable,
+            text_font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
+            text='',
+
+            bg_color=COLOR['dark_gray_2'],
+            fg_color=COLOR['light_gray_1'],
+            hover_color=COLOR['hover'],
+            text_color=COLOR['white'],
+            border_color=COLOR['dark_gray_5'],
+
+            border_width=3,
+            onvalue=True,
+
+            offvalue=False,
+            corner_radius=7
+        )
+        self.tray_variable.set(False)
+        tray_checkbox.grid(column=0, row=0, padx=(0, 0))
+
+        tray_label = tk.Label(
+            self,
+            font=('Bahnschrift Light', round(10 * TEXT_FACTOR)),
+            text='Minimize to Tray',
+            justify='left',
+            anchor='w',
+
+            bg=COLOR['dark_gray_2'],
+            fg=COLOR['white'],
+        )
+        tray_label.grid(column=1, row=0, sticky='we')
+
+        self.tray_variable.trace_add(
+            'write', lambda name, index, mode, var=self.tray_variable: \
+            self.__value_changed()
+        )
+
+    def __value_changed(self):
+        self.controller.enable_save()
+
+    def get_value(self):
+        return self.tray_variable.get()
+
+    def set_value(self, new_value):
+        self.tray_variable.set(new_value)
+
+    def set_description(self, event):
+        self.controller.set_setting_description(False, self.description, self.warning)
+
+    def remove_description(self, event):
+        self.controller.remove_setting_description()

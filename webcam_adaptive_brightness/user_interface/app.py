@@ -75,28 +75,30 @@ class App(ctk.CTk):
         self.destroy()
 
     def show_application(self):
-        if not self.maximized:
-            self.icon.stop()
-            self.deiconify()
+        if self.core.configs.get_setting('minimize_to_tray'):
+            if not self.maximized:
+                self.icon.stop()
+                self.deiconify()
 
-            if self.widthdraw_thread:
-                self.maximized = True
-                self.widthdraw_thread.join()
-                self.widthdraw_thread = None
+                if self.widthdraw_thread:
+                    self.maximized = True
+                    self.widthdraw_thread.join()
+                    self.widthdraw_thread = None
 
     def hide_application(self):
-        if self.maximized:
-            self.maximized = False
+        if self.core.configs.get_setting('minimize_to_tray'):
+            if self.maximized:
+                self.maximized = False
 
-            self.withdraw()
+                self.withdraw()
 
-            self.widthdraw_thread = threading.Thread(target=self.__update_withdrawn)
-            self.widthdraw_thread.start()
+                self.widthdraw_thread = threading.Thread(target=self.__update_withdrawn)
+                self.widthdraw_thread.start()
 
-            self.image = Image.open(io.BytesIO(base64.b64decode(images.icon)))
-            self.menu = (item('Quit', self.close_application), item('Show', self.show_application, default=True))
-            self.icon = pystray.Icon('WAB', self.image, 'Webcam Adaptive-Brightness', self.menu)
-            self.icon.run()
+                self.image = Image.open(io.BytesIO(base64.b64decode(images.icon)))
+                self.menu = (item('Quit', self.close_application), item('Show', self.show_application, default=True))
+                self.icon = pystray.Icon('WAB', self.image, 'Webcam Adaptive-Brightness', self.menu)
+                self.icon.run()
 
     def open_frame(self, frame_name):
         if frame_name == 'home':
@@ -123,6 +125,7 @@ class App(ctk.CTk):
             'threshold_in': self.settings_frame.body_frame.left_body_frame.settings_main.threshold_input_frame,
             'samples_in': self.settings_frame.body_frame.left_body_frame.settings_main.samples_input_frame,
             'preview_in': self.settings_frame.body_frame.left_body_frame.settings_main.preview_checkbox_frame,
+            'tray_in': self.settings_frame.body_frame.left_body_frame.settings_main.tray_checkbox_frame,
             'graph_in': self.settings_frame.body_frame.right_body_frame.graph_main_frame.graph_input_frame.graph_canvas
         }
 
@@ -166,6 +169,7 @@ class App(ctk.CTk):
 
             new_settings['device_name'] = self.io_directory['device_in'].get_value()
             new_settings['preview_enabled'] = self.io_directory['preview_in'].get_value()
+            new_settings['minimize_to_tray'] = self.io_directory['tray_in'].get_value()
 
             self.core.configs.save_configs(new_config)
             self.disable_save()
@@ -189,6 +193,7 @@ class App(ctk.CTk):
 
         self.io_directory['device_in'].set_value(settings['device_name'])
         self.io_directory['preview_in'].set_value(settings['preview_enabled'])
+        self.io_directory['tray_in'].set_value(settings['minimize_to_tray'])
 
         self.disable_save()
         self.validate_setting_inputs()

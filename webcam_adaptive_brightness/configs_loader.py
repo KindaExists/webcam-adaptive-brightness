@@ -27,6 +27,7 @@ class Configs:
         new_settings['screen_percentages'] = [0.0, 100.0]
         new_settings['device_name'] = False
         new_settings['preview_enabled'] = False
+        new_settings['minimize_to_tray'] = False
 
         self.save_configs(new_config)
 

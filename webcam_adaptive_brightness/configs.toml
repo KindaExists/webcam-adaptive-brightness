@@ -6,3 +6,4 @@ ambient_percentages = [ 0.0, 100.0,]
 screen_percentages = [ 0.0, 100.0,]
 device_name = "HD Webcam"
 preview_enabled = false
+minimize_to_tray = true
