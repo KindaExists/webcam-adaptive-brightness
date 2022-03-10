@@ -13,8 +13,8 @@ import pystray
 from pystray import MenuItem as item
 
 from user_interface import images
-from user_interface.pages.home.home_ctk import HomeFrame
-from user_interface.pages.settings.settings_ctk import SettingsFrame
+from user_interface.pages.home.home import HomeFrame
+from user_interface.pages.settings.settings import SettingsFrame
 from user_interface.constants import COLOR
 
 class App(ctk.CTk):
