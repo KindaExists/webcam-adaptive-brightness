@@ -5,6 +5,7 @@ import base64
 import threading
 import time
 import io
+import logging
 
 import tkinter as tk
 import customtkinter as ctk
@@ -58,6 +59,9 @@ class App(ctk.CTk):
 
         self.io_directory = self.generate_io_directory()
 
+        self.logger = logging.getLogger(__name__)
+        self.logger.info('Application Opened.')
+
         self.are_changes_saved = True
         self.open_frame('home')
         self.__update_webcam_display()
@@ -73,6 +77,7 @@ class App(ctk.CTk):
             pass
         self.core.release_external()
         self.destroy()
+        self.logger.info('Application Closed.')
 
     def show_application(self):
         if self.core.configs.get_setting('minimize_to_tray'):
