@@ -38,9 +38,9 @@ class Webcam:
         try:
             cam_id = self.list_cameras().index(cam_name)
         except ValueError:
-            cam_id = -1
+            cam_id = 0
 
-        self.vc.open(cam_id, cv.CAP_MSMF)
+        self.vc.open(cam_id)
 
     def release(self):
         self.has_opened = False
