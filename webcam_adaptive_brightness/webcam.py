@@ -42,15 +42,9 @@ class Webcam:
 
         self.vc.open(cam_id, cv.CAP_MSMF)
 
-        # Saves default auto-exposure settings
-        self.def_auto = self.vc.get(cv.CAP_PROP_AUTO_EXPOSURE)
-        # Sets auto-exposure to 0%
-        self.vc.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.0)
-
     def release(self):
         self.has_opened = False
         self.active_cam_name = None
-        self.vc.set(cv.CAP_PROP_AUTO_EXPOSURE, self.def_auto)
         self.vc.release()
 
     def show_image(self, window_name, frame):
